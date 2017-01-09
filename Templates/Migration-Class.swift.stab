@@ -1,0 +1,29 @@
+import SwiftKnex
+import Foundation
+
+class Migration_${migrationFileName}: Migratable {
+    var name: String {
+        return String(validatingUTF8: object_getClassName(self))!
+    }
+
+    func up(_ migrator: Migrator) throws {
+
+//        let create = Create(
+//            table: "tests",
+//            fields: [
+//                Schema.Field(name: "id", type: .int(length: nil)).asPrimaryKey().asAutoIncrement(),
+//                Schema.Field(name: "name", type: .int(length: nil)).asIndex().asNotNullable(),
+//            ])
+//            .hasTimestamps()
+//            .index(columns: ["name", "email"], unique: true)
+//
+//        try migrator.run(create)
+
+    }
+
+    func down(_ migrator: Migrator) throws {
+
+//        try migrator.run(Drop(table: "tests"))
+
+    }
+}
