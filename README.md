@@ -113,6 +113,21 @@ let result = try knex().table(from: "users").where("id" == 1).delete()
 print(result.affectedRows)
 ```
 
+## Transaction
+
+```swift
+
+do {
+    try con.knex().transaction { trx in // BEGIN TRANSCTION
+        try con.knex().table(from: "users").where("id" == 1).update(sets: ["name": "foo"], trx: trx)
+        try con.knex().table(from: "users").where("id" == 2).update(sets: ["name": "bar"], trx: trx)
+        try con.knex().table(from: "users").where("id" == 3).update(sets: ["name": "foobar"], trx: trx)
+    }
+    // COMMIT
+} catch {
+    // ROLLBACK
+}
+```
 
 # DDL
 
