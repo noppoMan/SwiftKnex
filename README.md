@@ -1,11 +1,22 @@
 # SwiftKnex
-A Mysql Native Client and Query Builder that works on Mac and Linux.
+A Mysql Native Client and Query Builder that works on Mac and Linux.  
+This library is powerded by [Prorsum](https://github.com/noppoman/Prorsum)
 
 ## Features
 * [x] Pure Swift Implementation(doesn't depend on libmysqlclient)
 * [x] Expressive querying
 * [x] Supporting Database Migration and Rollback
 * [ ] Async I/O
+
+## TODO
+* Type Safe result fetcher
+* BlobType
+* GeoType
+* JSON Schema
+* Test Coverage
+* Investigate Performance
+* Async I/O Mode
+* Documentation
 
 # Query Builder Reference
 
@@ -62,6 +73,16 @@ let results = try knex
                   .where("users.id" == 1)
                   .limit(10)
                   .offset(10)
+                  .fetch()
+
+print(results)
+```
+
+### count
+```swift
+let results = try knex
+                  .select(count("id").as("count"))
+                  .table("users")
                   .fetch()
 
 print(results)
@@ -263,6 +284,28 @@ swift build
 
 #### Seed
 TODO
+
+# Working with Prorsum
+Go Style async query performing and syncronization with Prorsum
+
+```swift
+import Prorsum
+
+let chan = Channel<ResultSet>.make()
+
+go {
+    let rows = try! knex().table(from: "users").where("id" == 1).fetch()
+    try chan.send(rows!)
+}
+
+go {
+    let rows = try! knex().table(from: "users").where("id" == 1).fetch()
+    try chan.send(rows!)
+}
+
+print(try! chan.receive())
+print(try! chan.receive())
+```
 
 # Mysql Library
 The base Connection and Querying library that used in SwiftKnex.
