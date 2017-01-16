@@ -20,6 +20,11 @@ This library is powerded by [Prorsum](https://github.com/noppoman/Prorsum)
 * Async I/O Mode
 * Documentation
 
+## Contributing
+All developers should feel welcome and encouraged to contribute to SwiftKnex.
+
+To contribute a feature or idea to SwiftKnex please submit an issue! If you find bugs, of course you can create the PR(s) directory.
+
 # Query Builder Reference
 
 ## Initializing the Library
