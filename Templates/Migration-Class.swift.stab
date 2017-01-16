@@ -3,7 +3,7 @@ import Foundation
 
 class Migration_${migrationFileName}: Migratable {
     var name: String {
-        return String(validatingUTF8: object_getClassName(self))!
+        return "\(Mirror(reflecting: self).subjectType)"
     }
 
     func up(_ migrator: Migrator) throws {

@@ -37,10 +37,7 @@ public protocol Migratable: class {
     func down(_ migrator: Migrator) throws
 }
 
-func validateMigration(name fullName: String) throws -> String {
-    let s = fullName.components(separatedBy: ".")
-    let name = s[s.count-1]
-    
+func validateMigration(name: String) throws -> String {
     let segments = name.components(separatedBy: "_")
     if segments.count != 3 {
         throw MigrationError.invalidMigrationName(name)

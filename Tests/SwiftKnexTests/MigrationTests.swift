@@ -12,7 +12,7 @@ import Foundation
 
 class Migration_20170101000000_CreateEmployee: Migratable {
     var name: String {
-        return String(validatingUTF8: object_getClassName(self))!
+        return "\(Mirror(reflecting: self).subjectType)"
     }
     
     func up(_ migrator: Migrator) throws {
@@ -35,7 +35,7 @@ class Migration_20170101000000_CreateEmployee: Migratable {
 
 class Migration_20170102000000_CreateCompany: Migratable {
     var name: String {
-        return String(validatingUTF8: object_getClassName(self))!
+        return "\(Mirror(reflecting: self).subjectType)"
     }
     
     func up(_ migrator: Migrator) throws {
