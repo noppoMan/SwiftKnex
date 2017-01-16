@@ -162,10 +162,10 @@ do {
 # Create
 ```swift
 let create = Create(table: "users", fields: [
-    Schema.Field(name: "id", type: .int(length: nil)).asPrimaryKey().asAutoIncrement(),
-    Schema.Field(name: "name", type: .string(length: nil)),
-    Schema.Field(name: "email", type: .string(length: nil)).asUnique(),
-    Schema.Field(name: "last_logined_at", type: .datetime).asIndex()
+    Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
+    Schema.Field(name: "name", type: Schema.Types.String()),
+    Schema.Field(name: "email", type: Schema.Types.String()).asUnique(),
+    Schema.Field(name: "last_logined_at", type: Schema.Types.DateTime()).asIndex()
 ])
 .hasTimeStamps() // add created_at and updated_at
 
