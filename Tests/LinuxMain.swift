@@ -2,5 +2,10 @@ import XCTest
 @testable import SwiftKnexTests
 
 XCTMain([
-     testCase(SwiftKnexTests.allTests),
+     testCase(InsertTests.allTests),
+     testCase(JoinTests.allTests),
+     testCase(MysqlTests.allTests),
+     testCase(SelectTests.allTests),
+     testCase(TransactionTests.allTests),
+     testCase(UpdateTests.allTests)
 ])
