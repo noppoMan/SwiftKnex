@@ -176,11 +176,11 @@ try knex().execRaw(sql: create.toDDL())
 
 ### Schema Types Comparison
 
-| Schema.Types  | Mysql Type    | 
-| ------------- |:-------------:| 
-| String       | VARCHAR        | 
-| Integer      | INT            | 
-| BigInteger   | BIGIMT         | 
+| Schema.Types  | Mysql Type    |
+| ------------- |:-------------:|
+| String       | VARCHAR        |
+| Integer      | INT            |
+| BigInteger   | BIGIMT         |
 | DateTime     | DATETIME       |
 | Text         | TEXT           |
 | MediumText   | MEDIUMTEXT     |
@@ -257,7 +257,7 @@ import Foundation
 
 class Migration_20170116015823_CreateUser: Migratable {
     var name: String {
-        return String(validatingUTF8: object_getClassName(self))!
+        return "\(Mirror(reflecting: self).subjectType)"
     }
 
     func up(_ migrator: Migrator) throws {
