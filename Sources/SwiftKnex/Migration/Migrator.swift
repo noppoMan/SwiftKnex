@@ -179,7 +179,7 @@ class MigrateRunner {
                 values: [
                     "name": name,
                     "batch": batch,
-                    "migration_time": "\(now)"
+                    "migration_time": now
                 ],
                 trx: trx
             )
