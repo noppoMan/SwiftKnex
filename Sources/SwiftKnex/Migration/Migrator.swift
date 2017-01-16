@@ -142,7 +142,7 @@ public class MigrateRunner {
             
             let lastBatch = migrationsPeformed.lastBatch()
             guard let results = try con.knex()
-                .table(from: con.config.migration.table)
+                .table(con.config.migration.table)
                 .where("batch" == lastBatch)
                 .fetch() else {
                 return
@@ -161,14 +161,14 @@ public class MigrateRunner {
             
             let deleteIDs = peformedAtLastBatches.map({ $0.id })
             _ = try con.knex()
-                .table(from: con.config.migration.table)
+                .table(con.config.migration.table)
                 .where(.in(field: "id", values: deleteIDs))
                 .delete(trx: trx)
         }
     }
     
     fileprivate func fetchMigrations(trx: Connection) throws -> [MigrationSchema] {
-        guard let results = try con.knex().table(from: con.config.migration.table).fetch(trx: trx) else {
+        guard let results = try con.knex().table(con.config.migration.table).fetch(trx: trx) else {
             return []
         }
         return results.map({ MigrationSchema(dictionary: $0) })

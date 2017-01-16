@@ -44,7 +44,7 @@ class UpdateTests: XCTestCase {
     
     func testUpdateById(){
         let res: QueryStatus?
-        res = try! con.knex().table(from: "test_users").where("id" == 1).update(sets: ["age": 30, "email": "foo@example.com"])
+        res = try! con.knex().table("test_users").where("id" == 1).update(sets: ["age": 30, "email": "foo@example.com"])
         XCTAssertEqual(res!.affectedRows, 1)
     }
 }

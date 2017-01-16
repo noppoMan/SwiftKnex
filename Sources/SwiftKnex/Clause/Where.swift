@@ -116,6 +116,22 @@ extension ConditionFilter {
     }
 }
 
+extension Date {
+    func dateTimeString() -> String {
+        struct statDFT {
+            static var dateStringFormatter :  DateFormatter? = nil
+            static var token : Int = 0
+        }
+        
+        // TODO once
+        statDFT.dateStringFormatter = DateFormatter()
+        statDFT.dateStringFormatter!.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        statDFT.dateStringFormatter!.locale = Locale(identifier: "en_US_POSIX")
+        
+        return statDFT.dateStringFormatter!.string(from: self)
+    }
+}
+
 func pack(key: String) -> String {
     return key.components(separatedBy: ".").map({ "`\($0)`" }).joined(separator: ".")
 }
@@ -136,6 +152,9 @@ func pack(value: Any) -> Any {
         
     case let v as Float:
         return v
+        
+    case let v as Date:
+        return v.dateTimeString()
         
     default:
         return "\(value)"

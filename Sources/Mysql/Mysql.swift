@@ -108,17 +108,10 @@ private func escapeData(_ data: [UInt8]) -> String {
         }
     }
     
-    //        res.append(0)
-    if let str = NSString(bytes: res, length: res.count, encoding: String.Encoding.ascii.rawValue) {
-        //        if let str = String(bytes: res, encoding: NSASCIIStringEncoding) {
-        #if os(Linux)
-            return str.bridge()
-        #else
-            return str as String
-        #endif
+    // res.append(0)
+    if let str = String(bytes: res, encoding: String.Encoding.ascii) {
+        return str
     }
-    
-    //return resStr
     return ""
 }
 

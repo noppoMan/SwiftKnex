@@ -27,7 +27,7 @@ let config = KnexConfig(
     host: "localhost",
     user: "user",
     database: "my_database",
-    isShowSQlLog: true
+    isShowSQLLog: true
 )
 
 let con = try KnexConnection(config: config)
@@ -122,14 +122,14 @@ print(result.affectedRows)
 
 ## Update
 ```swift
-let result = try knex().table(from: "users").where("id" == 1).update(sets: ["name": "foobar"])
+let result = try knex().table("users").where("id" == 1).update(sets: ["name": "foobar"])
 
 print(result.affectedRows)
 ```
 
 ## Delete
 ```swift
-let result = try knex().table(from: "users").where("id" == 1).delete()
+let result = try knex().table("users").where("id" == 1).delete()
 
 print(result.affectedRows)
 ```
@@ -140,9 +140,9 @@ print(result.affectedRows)
 
 do {
     try con.knex().transaction { trx in // BEGIN TRANSCTION
-        try con.knex().table(from: "users").where("id" == 1).update(sets: ["name": "foo"], trx: trx)
-        try con.knex().table(from: "users").where("id" == 2).update(sets: ["name": "bar"], trx: trx)
-        try con.knex().table(from: "users").where("id" == 3).update(sets: ["name": "foobar"], trx: trx)
+        try con.knex().table("users").where("id" == 1).update(sets: ["name": "foo"], trx: trx)
+        try con.knex().table("users").where("id" == 2).update(sets: ["name": "bar"], trx: trx)
+        try con.knex().table("users").where("id" == 3).update(sets: ["name": "foobar"], trx: trx)
     }
     // COMMIT
 } catch {
@@ -333,12 +333,12 @@ import Prorsum
 let chan = Channel<ResultSet>.make()
 
 go {
-    let rows = try! knex().table(from: "users").where("id" == 1).fetch()
+    let rows = try! knex().table("users").where("id" == 1).fetch()
     try chan.send(rows!)
 }
 
 go {
-    let rows = try! knex().table(from: "users").where("id" == 1).fetch()
+    let rows = try! knex().table("users").where("id" == 1).fetch()
     try chan.send(rows!)
 }
 
