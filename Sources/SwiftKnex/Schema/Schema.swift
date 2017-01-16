@@ -186,7 +186,7 @@ public struct Schema {
             self.type = type
         }
         
-        public func `default`(as value: Any) -> Field  {
+        public func `default`(to value: Any) -> Field  {
             self.defaultValue = value
             return self
         }
@@ -248,14 +248,14 @@ public struct Schema {
         let isUnique: Bool
     }
     
-    public struct TimeStampField {
-        let forCreated: String
+    public struct TimeStampFields {
+        let forCreated: Schema.Field
         
-        let forUpdated: String
+        let forUpdated: Schema.Field
         
         public init(forCreated: String = "created_at", forUpdated: String = "updated_at"){
-            self.forCreated = forCreated
-            self.forUpdated = forUpdated
+            self.forCreated = Schema.Field(name: forCreated, type: Schema.Types.DateTime())
+            self.forUpdated = Schema.Field(name: forUpdated, type: Schema.Types.DateTime())
         }
     }
     
@@ -267,7 +267,7 @@ public struct Schema {
         
         var timezone: String = "Local"
         
-        var timestamp: TimeStampField?
+        var timestamp: TimeStampFields?
         
         var table: String
         
@@ -298,12 +298,17 @@ public struct Schema {
             self.charset = char
         }
         
-        func hasTimestamps(_ timestampField: TimeStampField){
-            self.timestamp = timestampField
+        func hasTimestamps(_ timestampFields: TimeStampFields){
+            self.timestamp = timestampFields
         }
         
         func buildFields() -> [String] {
             var schemaDefiniations = [String]()
+            
+            var fields = self.fields
+            if let timestamp = self.timestamp {
+                fields += [timestamp.forCreated, timestamp.forUpdated]
+            }
             
             for f in fields {
                 var str = ""
