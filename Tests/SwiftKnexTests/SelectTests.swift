@@ -48,65 +48,65 @@ class SelectTests: XCTestCase {
     
     func testWehre() {
         var rows: ResultSet?
-        rows = try! con.knex().table(from: "test_users").where("email" == "jack@example.com").fetch()
+        rows = try! con.knex().table("test_users").where("email" == "jack@example.com").fetch()
         XCTAssert(rows!.count == 1)
         
-        rows = try! con.knex().table(from: "test_users").where("age" > 80).fetch()
+        rows = try! con.knex().table("test_users").where("age" > 80).fetch()
         XCTAssert(rows!.count == 1)
         
-        rows = try! con.knex().table(from: "test_users").where("age" >= 43).fetch()
+        rows = try! con.knex().table("test_users").where("age" >= 43).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table(from: "test_users").where("age" < 20).fetch()
+        rows = try! con.knex().table("test_users").where("age" < 20).fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table(from: "test_users").where("age" <= 23).fetch()
+        rows = try! con.knex().table("test_users").where("age" <= 23).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table(from: "test_users").where("age" != 23).fetch()
+        rows = try! con.knex().table("test_users").where("age" != 23).fetch()
         XCTAssert(rows!.count == 6)
         
-        rows = try! con.knex().table(from: "test_users").where(.like(field: "email", value: "jac%")).fetch()
+        rows = try! con.knex().table("test_users").where(.like(field: "email", value: "jac%")).fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table(from: "test_users").where(.in(field: "name", values: ["Tonny", "Ray", "Julia"])).fetch()
+        rows = try! con.knex().table("test_users").where(.in(field: "name", values: ["Tonny", "Ray", "Julia"])).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table(from: "test_users").where(.notIn(field: "name", values: ["Tonny", "Ray", "Julia"])).fetch()
+        rows = try! con.knex().table("test_users").where(.notIn(field: "name", values: ["Tonny", "Ray", "Julia"])).fetch()
         XCTAssert(rows!.count == 4)
         
-        rows = try! con.knex().table(from: "test_users").where(.between(field: "age", from: 10, to: 30)).fetch()
+        rows = try! con.knex().table("test_users").where(.between(field: "age", from: 10, to: 30)).fetch()
         XCTAssert(rows!.count == 4)
         
-        rows = try! con.knex().table(from: "test_users").where(.notBetween(field: "age", from: 10, to: 30)).fetch()
+        rows = try! con.knex().table("test_users").where(.notBetween(field: "age", from: 10, to: 30)).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table(from: "test_users").where(.isNull(field: "country")).fetch()
+        rows = try! con.knex().table("test_users").where(.isNull(field: "country")).fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table(from: "test_users").where(.isNotNull(field: "country")).fetch()
+        rows = try! con.knex().table("test_users").where(.isNotNull(field: "country")).fetch()
         XCTAssert(rows!.count == 5)
         
-        rows = try! con.knex().table(from: "test_users").where("name" == "Jack").where("country" == "USA").fetch()
+        rows = try! con.knex().table("test_users").where("name" == "Jack").where("country" == "USA").fetch()
         XCTAssert(rows!.count == 1)
         
-        rows = try! con.knex().table(from: "test_users").where("country" == "Japan").or("country" == "USA").fetch()
+        rows = try! con.knex().table("test_users").where("country" == "Japan").or("country" == "USA").fetch()
         XCTAssert(rows!.count == 4)
         
     }
     
     func testOrderBy(){
         var rows: ResultSet?
-        rows = try! con.knex().table(from: "test_users").order(by: "age", sort: .asc).fetch()
+        rows = try! con.knex().table("test_users").order(by: "age", sort: .asc).fetch()
         XCTAssertEqual(rows![0]["age"] as! Int, 15)
         
-        rows = try! con.knex().table(from: "test_users").order(by: "age", sort: .desc).fetch()
+        rows = try! con.knex().table("test_users").order(by: "age", sort: .desc).fetch()
         XCTAssertEqual(rows![0]["age"] as! Int, 81)
     }
     
     func testGroupBy(){
         var rows: ResultSet?
-        rows = try! con.knex().select(count("id").as("count"), col("country")).table(from: "test_users").group(by: "country").fetch()
+        rows = try! con.knex().select(count("id").as("count"), col("country")).table("test_users").group(by: "country").fetch()
         
         rows?.forEach {
             guard let country = $0["country"] as? String else {
@@ -130,7 +130,7 @@ class SelectTests: XCTestCase {
     
     func testHaving(){
         var rows: ResultSet?
-        rows = try! con.knex().select(count("id").as("count"), col("country"), col("age")).table(from: "test_users").group(by: "country").having("age" > 50).fetch()
+        rows = try! con.knex().select(count("id").as("count"), col("country"), col("age")).table("test_users").group(by: "country").having("age" > 50).fetch()
         
         rows?.forEach {
             guard let country = $0["country"] as? String else {
@@ -148,10 +148,10 @@ class SelectTests: XCTestCase {
     
     func testLimitOffset(){
         var rows: ResultSet?
-        rows = try! con.knex().table(from: "test_users").limit(3).fetch()
+        rows = try! con.knex().table("test_users").limit(3).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table(from: "test_users").limit(3).offset(6).fetch()
+        rows = try! con.knex().table("test_users").limit(3).offset(6).fetch()
         XCTAssert(rows!.count == 1)
     }
     

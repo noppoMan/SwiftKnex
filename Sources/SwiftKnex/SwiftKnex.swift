@@ -56,7 +56,7 @@ public final class Knex {
         self.connection = connection
     }
     
-    public func table(from name: String) -> Knex {
+    public func table(_ name: String) -> Knex {
         self.table = name
         return self
     }

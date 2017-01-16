@@ -56,7 +56,7 @@ class JoinTests: XCTestCase {
     func testJoin(){
         var rows: ResultSet?
         rows = try! con.knex()
-            .table(from: "test_users")
+            .table("test_users")
             .join("test_user_last_logins")
             .on("test_users.id" == "test_user_last_logins.user_id")
             .fetch()
@@ -64,7 +64,7 @@ class JoinTests: XCTestCase {
         XCTAssertEqual(rows!.count, 3)
         
         rows = try! con.knex()
-            .table(from: "test_users")
+            .table("test_users")
             .leftJoin("test_user_last_logins")
             .on("test_users.id" == "test_user_last_logins.user_id")
             .fetch()
@@ -72,7 +72,7 @@ class JoinTests: XCTestCase {
         XCTAssertEqual(rows!.count, 7)
         
         rows = try! con.knex()
-            .table(from: "test_users")
+            .table("test_users")
             .rightJoin("test_user_last_logins")
             .on("test_users.id" == "test_user_last_logins.user_id")
             .fetch()
@@ -80,7 +80,7 @@ class JoinTests: XCTestCase {
         XCTAssertEqual(rows!.count, 3)
         
         rows = try! con.knex()
-            .table(from: "test_users")
+            .table("test_users")
             .innerJoin("test_user_last_logins")
             .on("test_users.id" == "test_user_last_logins.user_id")
             .fetch()
