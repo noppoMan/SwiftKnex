@@ -37,10 +37,7 @@ public protocol Migratable: class {
     func down(_ migrator: Migrator) throws
 }
 
-func validateMigration(name fullName: String) throws -> String {
-    let s = fullName.components(separatedBy: ".")
-    let name = s[s.count-1]
-    
+func validateMigration(name: String) throws -> String {
     let segments = name.components(separatedBy: "_")
     if segments.count != 3 {
         throw MigrationError.invalidMigrationName(name)
@@ -89,20 +86,20 @@ extension Collection where Self.Iterator.Element == MigrationSchema {
     }
 }
 
-public class MigrateRunner {
+class MigrateRunner {
     
     let knexMigrations: [Migratable]
     
     let con: KnexConnection
     
-    public init(config: KnexConfig, knexMigrations: [Migratable]) throws {
+    init(config: KnexConfig, knexMigrations: [Migratable]) throws {
         con = try KnexConnection(config: config)
         self.knexMigrations = knexMigrations
         
         try createMigrationTableIfNotExists()
     }
     
-    public func up() throws {
+    func up() throws {
         try con.knex().transaciton { trx in
             var recentMigrated = [String]()
             let migrationsPeformed = try fetchMigrations(trx: trx)
@@ -133,7 +130,7 @@ public class MigrateRunner {
         }
     }
     
-    public func down() throws {
+    func down() throws {
         try con.knex().transaciton { trx in
             let migrationsPeformed = try fetchMigrations(trx: trx)
             if migrationsPeformed.isEmpty {
@@ -182,7 +179,7 @@ public class MigrateRunner {
                 values: [
                     "name": name,
                     "batch": batch,
-                    "migration_time": "\(now)"
+                    "migration_time": now
                 ],
                 trx: trx
             )

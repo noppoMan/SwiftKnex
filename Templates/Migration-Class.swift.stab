@@ -3,7 +3,7 @@ import Foundation
 
 class Migration_${migrationFileName}: Migratable {
     var name: String {
-        return String(validatingUTF8: object_getClassName(self))!
+        return "\(Mirror(reflecting: self).subjectType)"
     }
 
     func up(_ migrator: Migrator) throws {
@@ -11,7 +11,7 @@ class Migration_${migrationFileName}: Migratable {
 //        let create = Create(
 //            table: "tests",
 //            fields: [
-//                Schema.Field(name: "id", type: Schema.Types.Integer())).asPrimaryKey().asAutoIncrement(),
+//                Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
 //                Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
 //            ])
 //            .hasTimestamps()

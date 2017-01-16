@@ -8,5 +8,6 @@ XCTMain([
      testCase(SelectTests.allTests),
      testCase(TransactionTests.allTests),
      testCase(UpdateTests.allTests),
-     testCase(DDLTests.allTests)
+     testCase(DDLTests.allTests),
+     testCase(MigrationTests.allTests)
 ])
