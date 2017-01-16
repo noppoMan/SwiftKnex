@@ -14,7 +14,8 @@ class TransactionTests: XCTestCase {
     
     static var allTests : [(String, (TransactionTests) -> () throws -> Void)] {
         return [
-            ("testTransactionCommit", testTransactionCommit)
+            ("testTransactionCommit", testTransactionCommit),
+            ("testTransactionRollback", testTransactionRollback)
         ]
     }
     

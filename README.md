@@ -264,9 +264,9 @@ class Migration_20170116015823_CreateUser: Migratable {
        let create = Create(
            table: "users",
            fields: [
-               Schema.Field(name: "id", type: .int(length: nil)).asPrimaryKey().asAutoIncrement(),
-               Schema.Field(name: "name", type: .int(length: nil)).asIndex().asNotNullable(),
-               Schema.Field(name: "email", type: .int(length: nil)).asUnique().asNotNullable()
+               Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
+               Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
+               Schema.Field(name: "email", type: Schema.Types.String()).asUnique().asNotNullable()
            ])
            .hasTimestamps()
            .index(columns: ["name", "email"], unique: true)

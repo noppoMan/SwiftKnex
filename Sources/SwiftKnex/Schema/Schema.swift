@@ -12,7 +12,145 @@ public enum SchemaError: Error {
     case primaryKeyShouldBeOnlyOne
 }
 
+public protocol FieldType {
+    func build() -> Swift.String
+}
+
+public protocol BasicFieldType: FieldType {
+    var length: Int { get }
+    var fieldType: Swift.String { get }
+}
+
+extension BasicFieldType {
+    public func build() -> Swift.String {
+        return "\(fieldType)(\(length))"
+    }
+}
+
 public struct Schema {
+    
+    public struct Types {
+        public struct Integer: BasicFieldType {
+            public let length: Int
+            
+            public var fieldType: Swift.String {
+                return "INT"
+            }
+            
+            public init(length: Int = 11){
+                self.length = length
+            }
+        }
+        
+        public struct BigInteger: BasicFieldType {
+            public let length: Int
+            
+            public var fieldType: Swift.String {
+                return "BIGINT"
+            }
+            
+            public init(length: Int = 20){
+                self.length = length
+            }
+        }
+        
+        public struct String: BasicFieldType {
+            public let length: Int
+            
+            public var fieldType: Swift.String {
+                return "VARCHAR"
+            }
+            
+            public init(length: Int = 255){
+                self.length = length
+            }
+        }
+        
+        public struct Text: FieldType {
+            public let length: Int?
+            
+            public init(length: Int? = nil){
+                self.length = length
+            }
+            
+            public func build() -> Swift.String {
+                if let length = self.length {
+                    return "TEXT(\(length))"
+                } else {
+                    return "TEXT"
+                }
+            }
+        }
+        
+        public struct MediumText: FieldType {
+            public let length: Int?
+            
+            public init(length: Int? = nil){
+                self.length = length
+            }
+            
+            public func build() -> Swift.String {
+                if let length = self.length {
+                    return "MEDIUMTEXT(\(length))"
+                } else {
+                    return "MEDIUMTEXT"
+                }
+            }
+        }
+        
+        public struct Boolean: FieldType {
+            public init(){}
+            
+            public func build() -> Swift.String {
+                return "TINYINT(1)"
+            }
+        }
+        
+        public struct DateTime: FieldType {
+            public init(){}
+            
+            public func build() -> Swift.String {
+                return "DATETIME"
+            }
+        }
+        
+        public struct Float: FieldType {
+            let digits: Int?
+            let decimalDigits: Int?
+            
+            public init(digits: Int? = nil, decimalDigits: Int? = nil){
+                self.digits = digits
+                self.decimalDigits = digits
+            }
+            
+            public func build() -> Swift.String {
+                if let digits = self.digits, let decimalDigits = self.decimalDigits {
+                    return "FLOAT(\(digits), \(decimalDigits))"
+                } else {
+                    return "FLOAT"
+                }
+            }
+        }
+        
+        public struct Double: FieldType {
+            let digits: Int?
+            let decimalDigits: Int?
+            
+            public init(digits: Int? = nil, decimalDigits: Int? = nil){
+                self.digits = digits
+                self.decimalDigits = digits
+            }
+            
+            public func build() -> Swift.String {
+                if let digits = self.digits, let decimalDigits = self.decimalDigits {
+                    return "Double(\(digits), \(decimalDigits))"
+                } else {
+                    return "Double"
+                }
+            }
+        }
+    }
+    
     public enum Charset {
         case utf8
     }
@@ -22,61 +160,10 @@ public struct Schema {
         case unique
     }
     
-    public enum SchemaType {
-        case string(length: Int?)
-        case text
-        case mediumText
-        case int(length: Int?)
-        case bigInt(length: Int?)
-        case datetime
-        case float(precision: Range<Int>?)
-        case double(precision: Range<Int>?)
-        case boolean
-        
-        func build() -> String {
-            switch self {
-            case .string(length: let len):
-                return "VARCHAR(\(len ?? 255))"
-            
-            case .text:
-                return "TEXT"
-                
-            case .mediumText:
-                return "MEDIUMTEXT"
-                
-            case .int(length: let len):
-                return "INT(\(len ?? 12))"
-            
-            case .bigInt(length: let len):
-                return "BIGINT(\(len ?? 20))"
-                
-            case .datetime:
-                return "DATETIME"
-                
-            case .float(precision: let precision):
-                if let precision = precision {
-                    return "FLOAT(\(precision))"
-                } else {
-                    return "FLOAT"
-                }
-            
-            case .double(precision: let precision):
-                if let precision = precision {
-                    return "DOUBLE(\(precision))"
-                } else {
-                    return "DOUBLE"
-                }
-                
-            case .boolean:
-                return "TINYINT(1)"
-            }
-        }
-    }
-    
     public class Field {
         let name: String
         
-        let type: SchemaType
+        let type: FieldType
         
         var isPrimaryKey = false
         
@@ -94,7 +181,7 @@ public struct Schema {
         
         var defaultValue: Any?
         
-        public init(name: String, type: SchemaType) {
+        public init(name: String, type: FieldType) {
             self.name = name
             self.type = type
         }
