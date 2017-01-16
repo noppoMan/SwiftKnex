@@ -174,20 +174,20 @@ try knex().execRaw(sql: create.toDDL())
 
 ## Schema.Field Reference
 
-### Schema Types
-```swift
-public enum SchemaType {
-    case string(length: Int?)
-    case text
-    case mediumText
-    case int(length: Int?)
-    case bigInt(length: Int?)
-    case datetime
-    case float(precision: Range<Int>?)
-    case double(precision: Range<Int>?)
-    case boolean
-}
-```
+### Schema Types Comparison
+
+| Schema.Types  | Mysql Type    | 
+| ------------- |:-------------:| 
+| String       | VARCHAR        | 
+| Integer      | INT            | 
+| BigInteger   | BIGIMT         | 
+| DateTime     | DATETIME       |
+| Text         | TEXT           |
+| MediumText   | MEDIUMTEXT     |
+| Float        | FLOAT          |
+| Double       | DOUBLE         |
+| Boolean      | TINYINT(1)     |
+
 ### Functions for adding field attributes
 * `default(as value: Any)`
 * `after(for name: String)`
