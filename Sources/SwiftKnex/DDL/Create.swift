@@ -24,8 +24,8 @@ public struct Create: DDLBuildable {
         return self
     }
     
-    public func hasTimestamps() -> Create {
-        builder.hasTimestamps(Schema.TimeStampField())
+    public func hasTimestamps(forCreated: String = "created_at", forUpdated: String = "updated_at") -> Create {
+        builder.hasTimestamps(Schema.TimeStampFields(forCreated: forCreated, forUpdated: forUpdated))
         return self
     }
     
