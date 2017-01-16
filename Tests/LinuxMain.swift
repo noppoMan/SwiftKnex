@@ -7,5 +7,6 @@ XCTMain([
      testCase(MysqlTests.allTests),
      testCase(SelectTests.allTests),
      testCase(TransactionTests.allTests),
-     testCase(UpdateTests.allTests)
+     testCase(UpdateTests.allTests),
+     testCase(DDLTests.allTests)
 ])
