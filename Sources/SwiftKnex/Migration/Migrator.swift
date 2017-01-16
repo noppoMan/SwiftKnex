@@ -89,20 +89,20 @@ extension Collection where Self.Iterator.Element == MigrationSchema {
     }
 }
 
-public class MigrateRunner {
+class MigrateRunner {
     
     let knexMigrations: [Migratable]
     
     let con: KnexConnection
     
-    public init(config: KnexConfig, knexMigrations: [Migratable]) throws {
+    init(config: KnexConfig, knexMigrations: [Migratable]) throws {
         con = try KnexConnection(config: config)
         self.knexMigrations = knexMigrations
         
         try createMigrationTableIfNotExists()
     }
     
-    public func up() throws {
+    func up() throws {
         try con.knex().transaciton { trx in
             var recentMigrated = [String]()
             let migrationsPeformed = try fetchMigrations(trx: trx)
@@ -133,7 +133,7 @@ public class MigrateRunner {
         }
     }
     
-    public func down() throws {
+    func down() throws {
         try con.knex().transaciton { trx in
             let migrationsPeformed = try fetchMigrations(trx: trx)
             if migrationsPeformed.isEmpty {
