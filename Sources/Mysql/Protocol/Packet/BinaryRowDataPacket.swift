@@ -124,11 +124,7 @@ class BinaryRowDataPacket: RowDataParsable {
                     break
                 }
 
-                #if os(Linux)
-                    row[column.name] = NSString(format: "%4d-%02d-%02d", y, mo, d).bridge()
-                #else
-                    row[column.name] = res ?? NSNull()
-                #endif
+                row[column.name] = res ?? NSNull()
 
                 pos += n + Int(dlen)
 
@@ -159,11 +155,7 @@ class BinaryRowDataPacket: RowDataParsable {
                     break
                 }
 
-                #if os(Linux)
-                    row[column.name] = NSString(format: "%02d:%02d:%02d.%06d", h, m, s, u).bridge()
-                #else
-                    row[column.name] = res ?? NSNull()
-                #endif
+                row[column.name] = res ?? NSNull()
 
                 pos += n + Int(dlen)
 
@@ -197,12 +189,8 @@ class BinaryRowDataPacket: RowDataParsable {
                     break
                 }
 
-                #if os(Linux)
-                    row[column.name] = NSString(format: "%4d-%02d-%02d %02d:%02d:%02d.%06d", y, mo, d, h, m, s, u).bridge()
-                #else
-                    let dstr = String(format: "%4d-%02d-%02d %02d:%02d:%02d.%06d", arguments: [y, mo, d, h, m, s, u])
-                    row[column.name] = Date(dateTimeStringUsec: dstr) ?? NSNull()
-                #endif
+                let dstr = String(format: "%4d-%02d-%02d %02d:%02d:%02d.%06d", arguments: [y, mo, d, h, m, s, u])
+                row[column.name] = Date(dateTimeStringUsec: dstr) ?? NSNull()
 
                 pos += n + Int(dlen)
             default:
