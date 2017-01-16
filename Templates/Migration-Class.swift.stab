@@ -11,8 +11,8 @@ class Migration_${migrationFileName}: Migratable {
 //        let create = Create(
 //            table: "tests",
 //            fields: [
-//                Schema.Field(name: "id", type: .int(length: nil)).asPrimaryKey().asAutoIncrement(),
-//                Schema.Field(name: "name", type: .int(length: nil)).asIndex().asNotNullable(),
+//                Schema.Field(name: "id", type: Schema.Types.Integer())).asPrimaryKey().asAutoIncrement(),
+//                Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
 //            ])
 //            .hasTimestamps()
 //            .index(columns: ["name", "email"], unique: true)
