@@ -61,7 +61,8 @@ class MigrationTests: XCTestCase {
     static var allTests : [(String, (MigrationTests) -> () throws -> Void)] {
         return [
             ("testMigrateLatest", testMigrateLatest),
-            ("testMigrateRollback", testMigrateRollback)
+            ("testMigrateRollback", testMigrateRollback),
+            ("testMigrateCorruption", testMigrateCorruption),
         ]
     }
     
@@ -123,6 +124,24 @@ class MigrationTests: XCTestCase {
         
         try! runner2.down()
         XCTAssertNil(try! con.knex().table("knex_migrations").fetch())
+    }
+    
+    func testMigrateCorruption() {
+        do {
+            let runner1 = try MigrateRunner(config: basicKnexConfig(), knexMigrations: [Migration_20170101000000_CreateEmployee()])
+            try runner1.up()
+            XCTAssertEqual(1, try con.knex().table("knex_migrations").fetch()!.count)
+            
+            let runner2 = try MigrateRunner(config: basicKnexConfig(), knexMigrations: [Migration_20170102000000_CreateCompany()])
+            try runner2.up()
+            
+            XCTFail("Never called")
+            
+        } catch MigrationError.migrationClassIsMissing(let name) {
+            XCTAssertEqual(name, "Migration_20170101000000_CreateEmployee")
+        } catch {
+            XCTFail("\(error)")
+        }
     }
     
 }

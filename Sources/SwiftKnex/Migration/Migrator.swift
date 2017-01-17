@@ -28,7 +28,22 @@ extension Date {
 public enum MigrationError: Error {
     case invalidMigrationName(String)
     case timestampFormatShouldBe(String)
-    case migrationIsCorrupt
+    case migrationClassIsMissing(String)
+}
+
+extension MigrationError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .invalidMigrationName(let name):
+            return "The migration class name [\(name)] is invalid format"
+            
+        case .timestampFormatShouldBe(let format):
+            return "The timestamp format shoud be \(format)"
+            
+        case .migrationClassIsMissing(let name):
+            return "The migration directory is corrupt, the following files are missing \(name)"
+        }
+    }
 }
 
 public protocol Migratable: class {
@@ -115,6 +130,9 @@ class MigrateRunner {
                 return
             }
             
+            // check migration corruption
+            try checkMigrationCorruption(migrationsPeformed)
+            
             // After second times
             for m in knexMigrations {
                 let name = try validateMigration(name: m.name)
@@ -161,6 +179,15 @@ class MigrateRunner {
                 .table(con.config.migration.table)
                 .where(.in(field: "id", values: deleteIDs))
                 .delete(trx: trx)
+        }
+    }
+    
+    fileprivate func checkMigrationCorruption(_  migrationsPeformed: [MigrationSchema]) throws {
+        let names = knexMigrations.map({ $0.name })
+        try migrationsPeformed.map({ $0.name }).forEach {
+            if !names.contains($0) {
+                throw MigrationError.migrationClassIsMissing($0)
+            }
         }
     }
     
