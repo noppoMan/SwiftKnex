@@ -316,16 +316,17 @@ let config = KnexConfig(
 try Migrator.run(config: config, arguments: CommandLine.arguments, knexMigrations: knexMigrations)
 ```
 
-### 5. Perform Migration and Rollback
-After that, you only need to run the migration
-
-Current supporting commands are
-* `migrate:latest`:  Perform to migrate recent unmigrated files.
-* `migrate:rollback`: Rollback the migrations recent performed.(The rollback unit is grouped by `batch` number)
-
+after editing main.swift, run `swift build`
 ```
 swift build
 ```
+
+### 5. Perform Migration and Rollback
+After that, you only need to run the migration
+
+**Current supporting commands are**
+* `migrate:latest`:  Perform to migrate recent unmigrated files.
+* `migrate:rollback`: Rollback the migrations recent performed.(The rollback unit is grouped by `batch` number)
 
 #### Try to perform Migration
 ```
