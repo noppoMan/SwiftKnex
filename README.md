@@ -214,8 +214,7 @@ try knex().execRaw(sql: "SELECT * from users where id = ?", params: [1])
 ```
 
 # Migration
-SwiftKnex supports database migration features.
-**Migration features are pretty in early development**
+SwiftKnex supports database migration and rollback features.
 
 ## Flows
 
@@ -238,24 +237,36 @@ $ swift build
 ```
 and then, `SwiftKnexMigration` executable binary was created in the .build/debug directory.
 
-### 2. Create Migration file into Your `{$PROJ}/Sources/SwiftKnexMigration`
+### 2. Create Migration file
+
+the next step is creating migration class file into your `Sources/SwiftKnexMigration` directory with `./build/debug/SwiftKnexMigration create {ResourceName}`
+
+here is an example for creating `CreateUser` migration file
 ```
 ./build/debug/SwiftKnexMigration create CreateUser
 
 #
-# Created /YourProject/Sources/Migration/20170116015823_CreateUser.swift
+# Created /YourProject/Sources/SwiftKnexMigration/20170116015823_CreateUser.swift
 #
 ```
 
 ### 3. Edit Your Migration File
 
-After create migration file with `./build/debug/SwiftKnexMigration create Foo`, it was created in the Sources/Migration directory and edit it like following.
+After create migration class file, edit it like following.
+
+The created migration class has following methods.
+#### up
+Performed on migrate:latest
+
+#### down
+Performed on migrate:rollback
 
 ```swift
 import SwiftKnex
 import Foundation
 
 class Migration_20170116015823_CreateUser: Migratable {
+
     var name: String {
         return "\(Mirror(reflecting: self).subjectType)"
     }
@@ -280,17 +291,11 @@ class Migration_20170116015823_CreateUser: Migratable {
 }
 ```
 
-#### up
-Performed on migrate:latest
 
-### down
-Performed on migrate:rollback
+### 4. Create `main.swift` in the `{$PROJ}/Sources/SwiftKnexMigration`
 
-
-### 4. Create `main.swift` in the `{$PROJ}/Sources/Migration`
-
-Create `main.swift` in the `{$PROJ}/Sources/Migration` that is created by `Migrate create` at previous section.  
-And copy and paste the following code into your main.swift with replacing the `Migration_20170116015823_CreateUser` with correct class name.
+Create `main.swift` in the `{$PROJ}/Sources/SwiftKnexMigration` directory that is created by `Migrate create` at previous section.  
+And copy/paste the following code into your `{$PROJ}/Sources/SwiftKnexMigration/main.swift` and then, replace the class names in the `knexMigrations` array to correct names, and change the database configuration depending on your environment.
 
 You need to add the new class name(s) to the `knexMigrations` at every migration resource created.
 
@@ -314,18 +319,22 @@ try Migrator.run(config: config, arguments: CommandLine.arguments, knexMigration
 ### 5. Perform Migration and Rollback
 After that, you only need to run the migration
 
+Current supporting commands are
+* `migrate:latest`:  Perform to migrate recent unmigrated files.
+* `migrate:rollback`: Rollback the migrations recent performed.(The rollback unit is grouped by `batch` number)
+
 ```
 swift build
 ```
 
-#### Migration
+#### Try to perform Migration
 ```
-./build/Migration migrate:latest
+./build/debug/Migration migrate:latest
 ```
 
-#### Rollback
+#### Try to perform Rollback
 ```
-./build/Migration migrate:rollback
+./build/debug/Migration migrate:rollback
 ```
 
 #### Seed
@@ -345,7 +354,7 @@ go {
 }
 
 go {
-    let rows = try! knex().table("users").where("id" == 1).fetch()
+    let rows = try! knex().table("users").where("id" == 2).fetch()
     try chan.send(rows!)
 }
 
