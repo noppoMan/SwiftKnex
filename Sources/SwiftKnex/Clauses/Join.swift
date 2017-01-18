@@ -6,7 +6,7 @@
 //
 //
 
-class Join {
+class Join: Buildable {
     let table: String
     let type: JoinType
     var conditions = [ConditionalFilter]()
@@ -16,7 +16,7 @@ class Join {
         self.type = type
     }
     
-    public func build() -> String {
+    public func build() throws -> String {
         var conds = [String]()
         for cond in conditions {
             let prefix: String
@@ -25,10 +25,10 @@ class Join {
             } else {
                 prefix = "AND"
             }
-            conds.append(prefix + " " + cond.toQuery(secure: false))
+            try conds.append(prefix + " " + cond.toQuery(secure: false))
         }
         
-        return "\(type.build()) \(table) \(conds.joined(separator: " "))"
+        return try "\(type.build()) \(table) \(conds.joined(separator: " "))"
     }
 }
 
@@ -40,7 +40,7 @@ enum JoinType {
 }
 
 extension JoinType {
-    public func build() -> String {
+    public func build() throws -> String {
         switch self {
         case .left:
             return "LEFT JOIN"
@@ -59,8 +59,8 @@ extension JoinType {
 }
 
 extension Collection where Self.Iterator.Element == Join {
-    func build() -> String  {
-        let clauses: [String] = self.map { $0.build() }
+    func build() throws -> String  {
+        let clauses: [String] = try self.map { try $0.build() }
         return clauses.joined(separator: " ")
     }
 }

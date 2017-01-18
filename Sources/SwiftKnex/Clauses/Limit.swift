@@ -6,7 +6,7 @@
 //
 //
 
-struct Limit {
+struct Limit: Buildable {
     let limit: Int
     let offset: Int?
     
@@ -17,7 +17,7 @@ struct Limit {
 }
 
 extension Limit {
-    func build() -> String {
+    func build() throws -> String {
         if let offset = self.offset {
             return "LIMIT \(offset), \(limit)"
         } else  {
