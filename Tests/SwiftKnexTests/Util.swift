@@ -9,6 +9,38 @@
 import Foundation
 import SwiftKnex
 
+struct User: Entity, Serializable {
+    let id: Int
+    let name: String
+    let email: String
+    let age: Int
+    let country: String?
+    
+    init(id: Int, name: String, email: String, age: Int, country: String?) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.age = age
+        self.country = country
+    }
+    
+    init(row: Row) throws {
+        self.id = row["id"] as! Int
+        self.name = row["name"] as! String
+        self.email = row["email"] as! String
+        self.age = row["age"] as! Int
+        self.country = row["country"] as? String
+    }
+    
+    func serialize() throws -> [String: Any] {
+        return [
+            "name": name,
+            "email": email,
+            "age": age,
+            "country": country
+        ]
+    }
+}
 
 extension Date {
     init?(dateTimeString:String) {

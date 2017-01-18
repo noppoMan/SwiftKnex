@@ -16,6 +16,7 @@ class InsertTests: XCTestCase {
         return [
             ("testInsert", testInsert),
             ("testBatchInsert", testBatchInsert),
+            ("testTypeSafeInsert", testTypeSafeInsert)
         ]
     }
     
@@ -69,5 +70,11 @@ class InsertTests: XCTestCase {
             ]
         ])
         XCTAssertEqual(res!.affectedRows, 2)
+    }
+    
+    func testTypeSafeInsert() {
+        let user = User(id: 1, name: "new-user", email: "new-user@example.com", age: 30, country: nil)
+        let res = try! con.knex().insert(into: "test_users", values: user)
+        XCTAssertEqual(res!.insertId, 1)
     }
 }

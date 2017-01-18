@@ -7,17 +7,31 @@
 //
 
 extension Knex {
+    
+    public func fetch<T: Entity>(trx: Connection? = nil) throws -> [T] {
+        let rows = try execute(.select, trx).asResultSet()
+        return try rows?.map { try T(row: $0) } ?? []
+    }
+    
     public func fetch(trx: Connection? = nil) throws -> ResultSet? {
         return try execute(.select, trx).asResultSet()
+    }
+    
+    public func insert(into table: String, collection: [Serializable], trx: Connection? = nil) throws -> QueryStatus? {
+        queryBuilder.table(table)
+        
+        return try execute(.batchInsert(collection.map({ try $0.serialize() })), trx).asQueryStatus()
     }
     
     public func insert(into table: String, collection: [[String: Any]], trx: Connection? = nil) throws -> QueryStatus? {
         queryBuilder.table(table)
         
-        
-        //queryBuilder.where(("id" == 1 && ("id" == 1)) || ("id" == 1))
-        
         return try execute(.batchInsert(collection), trx).asQueryStatus()
+    }
+    
+    public func insert(into table: String, values: Serializable, trx: Connection? = nil) throws -> QueryStatus? {
+        queryBuilder.table(table)
+        return try execute(.insert(values.serialize()), trx).asQueryStatus()
     }
     
     public func insert(into table: String, values: [String: Any], trx: Connection? = nil) throws -> QueryStatus? {
