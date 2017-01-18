@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct BatchInsertQueryBuilder: QueryBuilder {
+struct BatchInsertQueryBuilder: Buildable {
     
     let table: String
     

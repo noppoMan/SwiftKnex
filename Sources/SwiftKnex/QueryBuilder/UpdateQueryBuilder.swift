@@ -6,7 +6,7 @@
 //
 //
 
-struct UpdateQueryBuilder: QueryBuilder {
+struct UpdateQueryBuilder: Buildable {
     
     let table: String
     

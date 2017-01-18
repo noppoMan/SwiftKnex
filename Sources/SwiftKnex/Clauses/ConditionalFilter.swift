@@ -17,7 +17,7 @@ public enum Operator: String {
     case smallerThanEqual = "<="
 }
 
-public enum ConditionalFilter {
+public indirect enum ConditionalFilter {
     case withOperator(field: String, op: Operator, value: Any)
     case like(field: String, value: String)
     case `in`(field: String, values: [Any])
@@ -27,6 +27,9 @@ public enum ConditionalFilter {
     case isNull(field: String)
     case isNotNull(field: String)
     case raw(String)
+    // comparison
+    case andComparison(ConditionalFilter, ConditionalFilter)
+    case orComparison(ConditionalFilter, ConditionalFilter)
 }
 
 extension ConditionalFilter {
@@ -58,6 +61,12 @@ extension ConditionalFilter {
             
         case .raw(query: _):
             return []
+            
+        case .andComparison(let aFilter, let bFilter):
+            return aFilter.toBindParams() + bFilter.toBindParams()
+            
+        case .orComparison(let aFilter, let bFilter):
+            return aFilter.toBindParams() + bFilter.toBindParams()
         }
     }
     
@@ -112,6 +121,12 @@ extension ConditionalFilter {
             
         case .raw(query: let query):
             return query
+            
+        case .andComparison(let aFilter, let bFilter):
+            return "(\(aFilter.toQuery()) AND \(bFilter.toQuery()))"
+            
+        case .orComparison(let aFilter, let bFilter):
+            return "(\(aFilter.toQuery()) OR \(bFilter.toQuery()))"
         }
     }
 }
@@ -159,6 +174,14 @@ func pack(value: Any) -> Any {
     default:
         return "\(value)"
     }
+}
+
+public func || (lhs: ConditionalFilter, rhs: ConditionalFilter) -> ConditionalFilter {
+    return .orComparison(lhs, rhs)
+}
+
+public func && (lhs: ConditionalFilter, rhs: ConditionalFilter) -> ConditionalFilter {
+    return .andComparison(lhs, rhs)
 }
 
 public func >(key: String, pred: Any) -> ConditionalFilter {
