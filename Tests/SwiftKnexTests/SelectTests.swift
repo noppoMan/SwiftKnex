@@ -15,6 +15,7 @@ class SelectTests: XCTestCase {
     static var allTests : [(String, (SelectTests) -> () throws -> Void)] {
         return [
             ("testWehre", testWehre),
+            ("testTypeSafeFetch", testTypeSafeFetch),
             ("testOrderBy", testOrderBy),
             ("testLimitOffset", testLimitOffset),
             ("testGroupBy", testGroupBy),
@@ -108,6 +109,11 @@ class SelectTests: XCTestCase {
         rows = try! con.knex().table("test_users").where(.notIn("id", QueryBuilder().select(col("id")).table("test_users").where("country" == "USA"))).fetch()
         
         XCTAssert(rows!.count == 4)
+    }
+    
+    func testTypeSafeFetch(){
+        let users: [User] = try! con.knex().table("test_users").where("country" == "USA").fetch()
+        XCTAssertEqual(users.map({ $0.id }), [1, 2, 6])
     }
     
     func testOrderBy(){

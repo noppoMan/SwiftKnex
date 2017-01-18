@@ -13,11 +13,9 @@ This library is powerded by [Prorsum](https://github.com/noppoman/Prorsum)
 * [ ] Async I/O
 
 ## TODO
-* Type Safe result fetcher
 * BlobType
 * GeoType
 * JSON Schema
-* Test Coverage
 * Investigate Performance
 * Async I/O Mode
 * Documentation
@@ -129,6 +127,50 @@ let results = try knex
                     )).fetch()
 
 print(results)
+```
+
+### TypeSafe Querying with Entity protocol
+
+Define Your Entity with confirming `Entity` protocol and fetch rows as your specified type.
+
+```swift
+struct User: Entity, Serializable {
+    let id: Int
+    let name: String
+    let email: String
+    let age: Int
+    let country: String?
+
+    init(row: Row) throws {
+        self.id = row["id"] as! Int
+        self.name = row["name"] as! String
+        self.email = row["email"] as! String
+        self.age = row["age"] as! Int
+        self.country = row["country"] as? String
+    }
+
+    func serialize() throws -> [String: Any] {
+        return [
+            "name": name,
+            "email": email,
+            "age": age,
+            "country": country
+        ]
+    }
+}
+
+// fetch rows as User(s)
+let users: [User] = try! con.knex()
+                            .table("users")
+                            .where("country" == "Japan")
+                            .fetch()
+
+print(users.first)
+
+// Insert User(should confirm Serializable)
+let result = try! con.knex().insert(into: "users", values: user)
+
+print(result?.insertId)
 ```
 
 ### Available clauses
