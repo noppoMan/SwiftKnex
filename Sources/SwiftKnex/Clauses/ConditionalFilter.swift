@@ -17,40 +17,64 @@ public enum Operator: String {
     case smallerThanEqual = "<="
 }
 
+public enum ConditionalFilterError: Error {
+    case unrecognizedFilter
+}
+
 public indirect enum ConditionalFilter {
+    // basics
     case withOperator(field: String, op: Operator, value: Any)
-    case like(field: String, value: String)
-    case `in`(field: String, values: [Any])
-    case notIn(field: String, values: [Any])
-    case between(field: String, from: Any, to: Any)
-    case notBetween(field: String, from: Any, to: Any)
-    case isNull(field: String)
-    case isNotNull(field: String)
-    case raw(String)
+    case like(String, String)
+    case `in`(String, Any)
+    case notIn(String, Any)
+    case between(String, Any, Any)
+    case notBetween(String, Any, Any)
+    case isNull(String)
+    case isNotNull(String)
+    
     // comparison
     case andComparison(ConditionalFilter, ConditionalFilter)
     case orComparison(ConditionalFilter, ConditionalFilter)
+    
+    // raw
+    case raw(String)
 }
 
 extension ConditionalFilter {
-    func toBindParams() -> [Any] {
+    func toBindParams() throws -> [Any] {
         switch self {
-        case .withOperator(field: _, op: _, value: let value):
+        case .withOperator(_, op: _, let value):
             return [pack(value: value)]
             
-        case .like(field: _, value: let value):
+        case .like(_, let value):
             return [pack(value: value)]
             
-        case .in(field: _, values: let values):
-            return values.map({ pack(value: $0) })
+        case .in(_, let value):
+            switch value {
+            case let values as [Any]:
+                return values.map({ pack(value: $0) })
+            case let qb as QueryBuilder:
+                let (_, params) = try qb.build(.select).build()
+                return params
+            default:
+                break
+            }
             
-        case .notIn(field: _, values: let values):
-            return values.map({ pack(value: $0) })
+        case .notIn(_, let value):
+            switch value {
+            case let values as [Any]:
+                return values.map({ pack(value: $0) })
+            case let qb as QueryBuilder:
+                let (_, params) = try qb.build(.select).build()
+                return params
+            default:
+                break
+            }
             
-        case .between(field: _, from: let from, to: let to):
+        case .between(_, let from, let to):
             return [pack(value: from), pack(value: to)]
             
-        case .notBetween(field: _, from: let from, to: let to):
+        case .notBetween(_, let from, let to):
             return [pack(value: from), pack(value: to)]
             
         case .isNull(field: _):
@@ -63,71 +87,94 @@ extension ConditionalFilter {
             return []
             
         case .andComparison(let aFilter, let bFilter):
-            return aFilter.toBindParams() + bFilter.toBindParams()
+            return try aFilter.toBindParams() + bFilter.toBindParams()
             
         case .orComparison(let aFilter, let bFilter):
-            return aFilter.toBindParams() + bFilter.toBindParams()
+            return try aFilter.toBindParams() + bFilter.toBindParams()
         }
+        
+        throw ConditionalFilterError.unrecognizedFilter
     }
     
-    func toQuery(secure: Bool = true) -> String {
+    func toQuery(secure: Bool = true) throws -> String {
         switch self {
-        case .withOperator(field: let field, op: let op, value: let value):
+        case .withOperator(let field, let op, let value):
             if !secure {
                 return "\(pack(key: field)) \(op.rawValue) \(value)"
             }
             return "\(pack(key: field)) \(op.rawValue) ?"
             
-        case .like(field: let field, value: let value):
+        case .like(let field, let value):
             if !secure {
                 return "\(pack(key: field)) LIKE \(value)"
             }
             return "\(pack(key: field)) LIKE ?"
             
-        case .in(field: let field, values: let values):
-            if !secure {
+        case .in(let field, let value):
+            switch value {
+            case let values as [Any]:
+                if secure {
+                    let placeHolders = (0..<values.count).map({ _ in "?" }).joined(separator: ", ")
+                    return "\(pack(key: field)) IN (\(placeHolders))"
+                }
                 let params = values.map({ "\(pack(value: $0))" }).joined(separator: ", ")
-                return "\(pack(key: field)) IN(\(params))"
-            }
-            let placeHolders = (0..<values.count).map({ _ in "?" }).joined(separator: ", ")
-            return "\(pack(key: field)) IN(\(placeHolders))"
+                return "\(pack(key: field)) IN (\(params))"
+                
+            case let qb as QueryBuilder:
+                let (sql, _) = try qb.build(.select).build()
+                return "\(pack(key: field)) IN (\(sql))"
             
-        case .notIn(field: let field, values: let values):
-            if !secure {
+            default:
+                break
+            }
+            
+        case .notIn(let field, let value):
+            switch value {
+            case let values as [Any]:
+                if secure {
+                    let placeHolders = (0..<values.count).map({ _ in "?" }).joined(separator: ", ")
+                    return "\(pack(key: field)) NOT IN (\(placeHolders))"
+                }
                 let params = values.map({ "\(pack(value: $0))" }).joined(separator: ", ")
-                return "\(pack(key: field)) NOT IN(\(params))"
+                return "\(pack(key: field)) NOT IN (\(params))"
+                
+            case let qb as QueryBuilder:
+                let (sql, _) = try qb.build(.select).build()
+                return "\(pack(key: field)) NOT IN (\(sql))"
+                
+            default:
+                break
             }
             
-            let placeHolders = (0..<values.count).map({ _ in "?" }).joined(separator: ", ")
-            return "\(pack(key: field)) NOT IN(\(placeHolders))"
-            
-        case .between(field: let field, from: let from, to: let to):
+        case .between(let field, let from, let to):
             if !secure {
                 return "\(pack(key: field)) BETWEEN \(from) AND \(to)"
             }
             return "\(pack(key: field)) BETWEEN ? AND ?"
             
-        case .notBetween(field: let field, from:  let from, to: let to):
+        case .notBetween(let field, let from, let to):
             if !secure {
                 return "\(pack(key: field)) NOT BETWEEN \(from) AND \(to)"
             }
             return "\(pack(key: field)) NOT BETWEEN ? AND ?"
             
-        case .isNull(field: let field):
+        case .isNull(let field):
             return "\(pack(key: field)) IS NULL"
             
-        case .isNotNull(field: let field):
+        case .isNotNull(let field):
             return "\(pack(key: field)) IS NOT NULL"
             
-        case .raw(query: let query):
+        case .raw(let query):
             return query
             
         case .andComparison(let aFilter, let bFilter):
-            return "(\(aFilter.toQuery()) AND \(bFilter.toQuery()))"
+            return try "(\(aFilter.toQuery()) AND \(bFilter.toQuery()))"
             
         case .orComparison(let aFilter, let bFilter):
-            return "(\(aFilter.toQuery()) OR \(bFilter.toQuery()))"
+            return try "(\(aFilter.toQuery()) OR \(bFilter.toQuery()))"
         }
+        
+        throw ConditionalFilterError.unrecognizedFilter
     }
 }
 
@@ -216,36 +263,36 @@ public enum ConditionConnector {
 
 extension Collection where Self.Iterator.Element == ConditionConnector {
     
-    public func bindParams() -> [Any] {
+    public func bindParams() throws -> [Any] {
         var params = [Any]()
         
         for c in self {
             switch c {
             case .where(let clause):
-                params.append(contentsOf: clause.toBindParams())
+                try params.append(contentsOf: clause.toBindParams())
                 
             case .and(let clause):
-                params.append(contentsOf: clause.toBindParams())
+                try params.append(contentsOf: clause.toBindParams())
                 
             case .or(let clause):
-                params.append(contentsOf: clause.toBindParams())
+                try params.append(contentsOf: clause.toBindParams())
             }
         }
         
         return params
     }
     
-    public func build() -> String  {
-        let clauses: [String] = self.map({
+    public func build() throws -> String  {
+        let clauses: [String] = try self.map({
             switch $0 {
             case .where(let clause):
-                return "WHERE \(clause.toQuery())"
+                return try "WHERE \(clause.toQuery())"
                 
             case .and(let clause):
-                return "AND \(clause.toQuery())"
+                return try "AND \(clause.toQuery())"
                 
             case .or(let clause):
-                return "OR \(clause.toQuery())"
+                return try "OR \(clause.toQuery())"
             }
         })
         

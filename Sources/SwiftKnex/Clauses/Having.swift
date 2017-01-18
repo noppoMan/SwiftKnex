@@ -6,12 +6,12 @@
 //
 //
 
-struct Having {
+struct Having: Buildable {
     let condition: ConditionalFilter
 }
 
 extension Having {
-    func build() -> String {
-        return "HAVING \(condition.toQuery())"
+    func build() throws -> String {
+        return try "HAVING \(condition.toQuery())"
     }
 }

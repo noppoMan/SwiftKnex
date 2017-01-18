@@ -8,21 +8,21 @@
 
 import Foundation
 
-struct BatchInsertQueryBuilder: Buildable {
+struct BatchInsertQueryBuilder: QueryBuildable {
     
-    let table: String
+    let table: Table
     
     let collection: [[String: Any]]
     
-    init(into table: String, collection: [[String: Any]]){
+    init(into table: Table, collection: [[String: Any]]){
         self.table = table
         self.collection = collection
     }
     
-    func build() -> (String, [Any]) {
+    func build() throws -> (String, [Any]) {
         // TODO should throws Error
         guard let fields = collection.max(by: { $0.0.count < $0.1.count }) else {
-            return ("INSERT INTO \(table)", [])
+            throw QueryBuilderError.emptyValues
         }
         
         let fieldQuery = fields.keys.map({ pack(key: $0) }).joined(separator: ", ")
@@ -45,11 +45,10 @@ struct BatchInsertQueryBuilder: Buildable {
         
         var sql = ""
         sql += "INSERT INTO"
-        sql += " \(table)"
+        sql += try " \(table.build().0)"
         sql += " (\(fieldQuery))"
         sql += " VALUES"
         sql += " " + placeHolders.joined(separator: ",")
-        sql += ";"
         
         return (sql, params)
     }

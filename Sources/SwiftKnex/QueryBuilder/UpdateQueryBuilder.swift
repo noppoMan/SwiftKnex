@@ -6,9 +6,9 @@
 //
 //
 
-struct UpdateQueryBuilder: Buildable {
+struct UpdateQueryBuilder: QueryBuildable {
     
-    let table: String
+    let table: Table
     
     let condistions: [ConditionConnector]
     
@@ -24,33 +24,32 @@ struct UpdateQueryBuilder: Buildable {
     
     let sets: [String: Any]
     
-    func build() -> (String, [Any]) {
+    func build() throws -> (String, [Any]) {
         let setQuery = sets.map({ "\($0.key) = ?" }).joined(separator: ", ")
         var bindParams = sets.map({ $0.value })
         
-        let condistionQuery = condistions.build()
-        bindParams.append(contentsOf: condistions.bindParams())
+        let condistionQuery = try condistions.build()
+        try bindParams.append(contentsOf: condistions.bindParams())
     
-        let groupQuery = group != nil ? group!.build() : ""
+        let groupQuery = try group != nil ? group!.build() : ""
         var havingQuery = ""
         if let having = self.having {
-            havingQuery = having.build()
-            bindParams.append(contentsOf:  having.condition.toBindParams())
+            havingQuery = try having.build()
+            try bindParams.append(contentsOf:  having.condition.toBindParams())
         }
         
-        let limitQuery = limit != nil ? limit!.build() : ""
+        let limitQuery = try limit != nil ? limit!.build() : ""
         
         var sql = ""
         sql += "UPDATE"
-        sql += insertSpace(table)
-        sql += insertSpace(joins.build())
+        sql += try insertSpace(table.build().0)
+        try sql += insertSpace(joins.build())
         sql += " SET \(setQuery)"
         sql += insertSpace(condistionQuery)
         sql += insertSpace(groupQuery)
         sql += insertSpace(havingQuery)
         sql += insertSpace(orders.build())
         sql += insertSpace(limitQuery)
-        sql += ";"
         
         return (sql, bindParams)
     }

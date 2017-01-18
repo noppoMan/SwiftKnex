@@ -8,13 +8,13 @@
 
 import Foundation
 
-public enum OrderSort {
+public enum OrderSort: Buildable {
     case asc
     case desc
 }
 
-extension OrderSort: CustomStringConvertible {
-    public var description: String {
+extension OrderSort {
+    public func build() throws -> String {
         switch self {
         case .asc:
             return "ASC"

@@ -54,7 +54,7 @@ print(results)
 
 // or
 
-let results = try knex.table("users").where(.withOperator(field: "id", op: .equal, value: 1)).fetch()
+let results = try knex.table("users").where(.withOperator("id", .equal, 1)).fetch()
 print(results)
 ```
 
@@ -65,7 +65,7 @@ You can chain the conditional clauses like SQL and it's amazing expressive.
 ```swift
 let results = try knex
                   .table("users")
-                  .where(.between(field: "id", from: 1, to: 1000))
+                  .where(.between("id", 1, 1000))
                   .limit(10)
                   .offset(10)
                   .fetch()
@@ -100,8 +100,34 @@ print(results)
 ### where based on priority
 ```swift
 let results = try knex
-  .table("users")
-  .where(("country" == "Japan" && "age" > 20) || "country" == "USA")
+                    .table("users")
+                    .where(("country" == "Japan" && "age" > 20) || "country" == "USA")
+
+print(results)
+```
+
+### Sub Query
+
+#### fetch all rows from the results that taken by subquery.
+```swift
+let results = try knex
+                    .table(QueryBuilder().table("users").where("country" == "USA").as("t1"))
+                    .where("t1.id" == 1)
+
+print(results)
+```
+
+#### Use ids taken by subquery as argument of in clause
+```swift
+let results = try knex
+                    .table("users")
+                    .where(.in("id",
+                        QueryBuilder()
+                          .select(col("id"))
+                          .table("t1")
+                          .where("country" == "USA")
+                    )).fetch()
+
 print(results)
 ```
 
@@ -112,8 +138,8 @@ Note. Recently not supported entire clauses in Mysql.
 * `where(_ filter: ConditionFilter)`
   - `withOperator(field: String, op: Operator, value: Any)`
   - `like(field: String, value: String)`
-  - `in(field: String, values: [Any])`
-  - `notIn(field: String, values: [Any])`
+  - `in(field: String, value: Any)`
+  - `notIn(field: String, value: Any)`
   - `between(field: String, from: Any, to: Any)`
   - `notBetween(field: String, from: Any, to: Any)`
   - `isNull(field: String)`

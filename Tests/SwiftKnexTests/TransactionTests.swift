@@ -51,7 +51,7 @@ class TransactionTests: XCTestCase {
             _ = try con.knex().table("test_users").where("id" == 3).update(sets: ["age": 30], trx: trx)
         }
         XCTAssertEqual(con.knex().connection.availableConnection, 4)
-        let rows = try! con.knex().table("test_users").where(.in(field: "id", values: [1, 2, 3])).fetch()
+        let rows = try! con.knex().table("test_users").where(.in("id", [1, 2, 3])).fetch()
         XCTAssertEqual(rows![0]["age"] as! Int, 10)
         XCTAssertEqual(rows![1]["age"] as! Int, 20)
         XCTAssertEqual(rows![2]["age"] as! Int, 30)

@@ -6,12 +6,12 @@
 //
 //
 
-struct GroupBy {
+struct GroupBy: Buildable {
     let name: String
 }
 
 extension GroupBy {
-    func build() -> String {
+    func build() throws -> String {
         return "GROUP BY \(pack(key: name))"
     }
 }

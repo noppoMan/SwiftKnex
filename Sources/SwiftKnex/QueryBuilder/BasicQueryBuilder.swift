@@ -6,7 +6,7 @@
 //
 //
 
-struct BasicQueryBuilder: Buildable {
+struct BasicQueryBuilder: QueryBuildable {
     
     enum QueryType {
         case select
@@ -15,7 +15,7 @@ struct BasicQueryBuilder: Buildable {
     
     let type: QueryType
     
-    let table: String
+    let table: Table
     
     let condistions: [ConditionConnector]
     
@@ -31,16 +31,24 @@ struct BasicQueryBuilder: Buildable {
     
     let selectFields: [Field]
     
-    func build() -> (String, [Any]) {
-        let condistionQuery = condistions.build()
-        var bindParams = condistions.bindParams()
-        let groupQuery = group != nil ? group!.build() : ""
+    let alias: String?
+    
+    func build() throws -> (String, [Any]) {
+        var bindParams = [Any]()
+        let (table, params) = try self.table.build()
+        bindParams.append(contentsOf: params)
+        
+        let condistionQuery = try condistions.build()
+        try bindParams.append(contentsOf: condistions.bindParams())
+        
+        let groupQuery = try group != nil ? group!.build() : ""
         var havingQuery = ""
         if let having = self.having {
-            havingQuery = having.build()
-            bindParams.append(contentsOf:  having.condition.toBindParams())
+            havingQuery = try having.build()
+            try bindParams.append(contentsOf:  having.condition.toBindParams())
+        
         }
-        let limitQuery = limit != nil ? limit!.build() : ""
+        let limitQuery = try limit != nil ? limit!.build() : ""
         
         var sql = ""
         
@@ -55,14 +63,16 @@ struct BasicQueryBuilder: Buildable {
         
         sql += " FROM"
         sql += insertSpace(table)
-        sql += insertSpace(joins.build())
+        sql += try insertSpace(joins.build())
         sql += insertSpace(condistionQuery)
         sql += insertSpace(groupQuery)
         sql += insertSpace(havingQuery)
         sql += insertSpace(orders.build())
         sql += insertSpace(limitQuery)
-        sql += ";"
         
+        if let alias = alias {
+            return ("(\((sql))) AS \(alias)", bindParams)
+        }
         return (sql, bindParams)
     }
 }

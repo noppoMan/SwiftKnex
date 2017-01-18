@@ -38,9 +38,9 @@ extension Knex {
         
         let result: QueryResult
         if let trx = trx {
-            result = try trx.query(sql, bindParams: bindParams)
+            result = try trx.query(sql+";", bindParams: bindParams)
         } else {
-            result = try connection.query(sql, bindParams: bindParams)
+            result = try connection.query(sql+";", bindParams: bindParams)
         }
         
         return result

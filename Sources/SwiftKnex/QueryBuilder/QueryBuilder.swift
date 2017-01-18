@@ -16,6 +16,7 @@ func insertSpace(_ str: String) -> String {
 public enum QueryBuilderError: Error {
     case tableIsNotSet
     case unimplementedStatement(QueryType)
+    case emptyValues
 }
 
 public enum QueryType {
@@ -27,13 +28,13 @@ public enum QueryType {
     case forUpdate([String: Any])
 }
 
-public protocol Buildable {
-    func build() -> (String, [Any])
+public protocol QueryBuildable {
+    func build() throws -> (String, [Any])
 }
 
 public final class QueryBuilder {
     
-    var table: String?
+    var table: Table?
     
     var condistions = [ConditionConnector]()
     
@@ -49,11 +50,19 @@ public final class QueryBuilder {
     
     var selectFields = [Field]()
     
+    var alias: String?
+    
     public init(){}
     
     @discardableResult
     public func table(_ name: String) -> Self {
-        self.table = name
+        self.table = .string(name)
+        return self
+    }
+    
+    @discardableResult
+    public func table(_ qb: QueryBuilder) -> Self {
+        self.table = .queryBuilder(qb)
         return self
     }
     
@@ -109,6 +118,7 @@ public final class QueryBuilder {
         return self
     }
     
+    @discardableResult
     public func on(_ filter: ConditionalFilter) -> Self {
         joins.last?.conditions.append(filter)
         return self
@@ -151,7 +161,12 @@ public final class QueryBuilder {
         return self
     }
     
-    public func build(_ type: QueryType) throws -> Buildable {
+    public func `as`(_ name: String) -> Self {
+        self.alias = name
+        return self
+    }
+    
+    public func build(_ type: QueryType) throws -> QueryBuildable {
         guard let table = self.table else {
             throw QueryBuilderError.tableIsNotSet
         }
@@ -167,7 +182,8 @@ public final class QueryBuilder {
                 group: group,
                 having: having,
                 joins: joins,
-                selectFields: selectFields
+                selectFields: selectFields,
+                alias: alias
             )
             
         case .delete:
@@ -180,7 +196,8 @@ public final class QueryBuilder {
                 group: group,
                 having: having,
                 joins: joins,
-                selectFields: selectFields
+                selectFields: selectFields,
+                alias: alias
             )
             
         case .insert(let values):

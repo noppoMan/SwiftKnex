@@ -59,6 +59,11 @@ public final class Knex {
         return self
     }
     
+    public func table(_ qb: QueryBuilder) -> Self {
+        queryBuilder.table(qb)
+        return self
+    }
+    
     public func select(_ fields: Field...) -> Self {
         queryBuilder.select(fields)
         return self
