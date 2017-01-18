@@ -81,7 +81,7 @@ public final class ConnectionPool: ConnectionType {
         return result
     }
     
-    func getConnection(_ retryCount: Int = 0) throws -> Connection {
+    public func getConnection(_ retryCount: Int = 0) throws -> Connection {
         // TODO should implement timeout
         if Double(retryCount) > (0.1*10)*5 {
             throw ConnectionPoolError.failedToGetConnectionFromPool

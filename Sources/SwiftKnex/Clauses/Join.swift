@@ -9,7 +9,7 @@
 class Join {
     let table: String
     let type: JoinType
-    var conditions = [ConditionFilter]()
+    var conditions = [Filter]()
     
     init(table: String, type: JoinType){
         self.table = table

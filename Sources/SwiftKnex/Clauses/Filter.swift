@@ -17,7 +17,7 @@ public enum Operator: String {
     case smallerThanEqual = "<="
 }
 
-public enum ConditionFilter {
+public enum Filter {
     case withOperator(field: String, op: Operator, value: Any)
     case like(field: String, value: String)
     case `in`(field: String, values: [Any])
@@ -29,7 +29,7 @@ public enum ConditionFilter {
     case raw(String)
 }
 
-extension ConditionFilter {
+extension Filter {
     func toBindParams() -> [Any] {
         switch self {
         case .withOperator(field: _, op: _, value: let value):
@@ -132,63 +132,34 @@ extension Date {
     }
 }
 
-func pack(key: String) -> String {
-    return key.components(separatedBy: ".").map({ "`\($0)`" }).joined(separator: ".")
-}
-
-func pack(value: Any) -> Any {
-    switch value {
-    case let v as Bool:
-        return v ? "1" : "0"
-        
-    case let v as NSNull:
-        return v
-        
-    case let v as Int:
-        return v
-        
-    case let v as Double:
-        return v
-        
-    case let v as Float:
-        return v
-        
-    case let v as Date:
-        return v.dateTimeString()
-        
-    default:
-        return "\(value)"
-    }
-}
-
-public func >(key: String, pred: Any) -> ConditionFilter {
+public func >(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .greaterThan, value: pred)
 }
 
-public func >=(key: String, pred: Any) -> ConditionFilter {
+public func >=(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .greaterThanEqual, value: pred)
 }
 
-public func <(key: String, pred: Any) -> ConditionFilter {
+public func <(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .smallerThan, value: pred)
 }
 
-public func <=(key: String, pred: Any) -> ConditionFilter {
+public func <=(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .smallerThanEqual, value: pred)
 }
 
-public func ==(key: String, pred: Any) -> ConditionFilter {
+public func ==(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .equal, value: pred)
 }
 
-public func !=(key: String, pred: Any) -> ConditionFilter {
+public func !=(key: String, pred: Any) -> Filter {
     return .withOperator(field: key, op: .notEqual, value: pred)
 }
 
 public enum ConditionConnector {
-    case `where`(ConditionFilter)
-    case and(ConditionFilter)
-    case or(ConditionFilter)
+    case `where`(Filter)
+    case and(Filter)
+    case or(Filter)
 }
 
 extension Collection where Self.Iterator.Element == ConditionConnector {
