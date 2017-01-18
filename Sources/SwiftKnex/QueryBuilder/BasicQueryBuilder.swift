@@ -6,7 +6,7 @@
 //
 //
 
-struct BasicQueryBuilder: QueryBuilder {
+struct BasicQueryBuilder: Buildable {
     
     enum QueryType {
         case select

@@ -31,34 +31,16 @@ public final class KnexConnection {
 }
 
 public final class Knex {
-    var table: String?
     
     let config: KnexConfig
     
     let connection: ConnectionPool
-        
-    var condistions = [ConditionConnector]()
     
-    var limit: Limit?
-    
-    var orders = [OrderBy]()
-    
-    var group: GroupBy?
-    
-    var having: Having?
-    
-    var joins = [Join]()
-    
-    var selectFields = [Field]()
+    let queryBuilder = QueryBuilder()
     
     public init(config: KnexConfig, connection: ConnectionPool){
         self.config = config
         self.connection = connection
-    }
-    
-    public func table(_ name: String) -> Knex {
-        self.table = name
-        return self
     }
     
     public func execRaw(trx: Connection? = nil, sql: String, prams: [Any] = []) throws -> QueryResult {
@@ -70,6 +52,76 @@ public final class Knex {
         }
         
         return result
+    }
+    
+    public func table(_ name: String) -> Self {
+        queryBuilder.table(name)
+        return self
+    }
+    
+    public func select(_ fields: Field...) -> Self {
+        queryBuilder.select(fields)
+        return self
+    }
+    
+    public func `where`(_ filter: ConditionalFilter) -> Self {
+        queryBuilder.where(filter)
+        return self
+    }
+    
+    public func or(_ filter: ConditionalFilter) -> Self {
+        queryBuilder.or(filter)
+        return self
+    }
+    
+    public func join(_ table: String) -> Self {
+        queryBuilder.join(table)
+        return self
+    }
+    
+    public func leftJoin(_ table: String) -> Self {
+        queryBuilder.leftJoin(table)
+        return self
+    }
+    
+    public func rightJoin(_ table: String) -> Self {
+        queryBuilder.rightJoin(table)
+        return self
+    }
+    
+    public func innerJoin(_ table: String) -> Self {
+        queryBuilder.innerJoin(table)
+        return self
+    }
+    
+    public func on(_ filter: ConditionalFilter) -> Self {
+        queryBuilder.on(filter)
+        return self
+    }
+    
+    public func limit(_ limit: Int) -> Self {
+        queryBuilder.limit(limit)
+        return self
+    }
+    
+    public func offset(_ offset: Int) -> Self {
+        queryBuilder.offset(offset)
+        return self
+    }
+    
+    public func order(by: String, sort: OrderSort = .asc) -> Self {
+        queryBuilder.order(by: by, sort: sort)
+        return self
+    }
+    
+    public func group(by name: String) -> Self {
+        queryBuilder.group(by: name)
+        return self
+    }
+    
+    public func having(_ filter: ConditionalFilter) -> Self {
+        queryBuilder.having(filter)
+        return self
     }
     
 }

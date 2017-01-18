@@ -7,7 +7,7 @@
 //
 
 
-struct InsertQueryBuilder: QueryBuilder {
+struct InsertQueryBuilder: Buildable {
     
     let table: String
     
