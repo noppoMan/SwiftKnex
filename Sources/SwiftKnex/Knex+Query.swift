@@ -13,6 +13,10 @@ extension Knex {
     
     public func insert(into table: String, collection: [[String: Any]], trx: Connection? = nil) throws -> QueryStatus? {
         queryBuilder.table(table)
+        
+        
+        //queryBuilder.where(("id" == 1 && ("id" == 1)) || ("id" == 1))
+        
         return try execute(.batchInsert(collection), trx).asQueryStatus()
     }
     

@@ -93,6 +93,10 @@ class SelectTests: XCTestCase {
         rows = try! con.knex().table("test_users").where("country" == "Japan").or("country" == "USA").fetch()
         XCTAssert(rows!.count == 4)
         
+        
+        rows = try! con.knex().table("test_users").where(("country" == "USA" && "name" == "Jack") || "country" == "Japan").fetch()
+        
+        XCTAssert(rows!.count == 2)
     }
     
     func testOrderBy(){
