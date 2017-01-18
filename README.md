@@ -97,6 +97,14 @@ let results = try knex
 print(results)
 ```
 
+### where based on priority
+```swift
+let results = try knex
+  .table("users")
+  .where(("country" == "Japan" && "age" > 20) || "country" == "USA")
+print(results)
+```
+
 ### Available clauses
 
 Note. Recently not supported entire clauses in Mysql.
