@@ -103,6 +103,7 @@ Note. Recently not supported entire clauses in Mysql.
 
 * `where(_ filter: ConditionFilter)`
   - `withOperator(field: String, op: Operator, value: Any)`
+  - `like(field: String, value: String)`
   - `in(field: String, values: [Any])`
   - `notIn(field: String, values: [Any])`
   - `between(field: String, from: Any, to: Any)`
