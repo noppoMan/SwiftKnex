@@ -17,7 +17,7 @@ public enum Operator: String {
     case smallerThanEqual = "<="
 }
 
-public enum ConditionFilter {
+public enum ConditionalFilter {
     case withOperator(field: String, op: Operator, value: Any)
     case like(field: String, value: String)
     case `in`(field: String, values: [Any])
@@ -29,7 +29,7 @@ public enum ConditionFilter {
     case raw(String)
 }
 
-extension ConditionFilter {
+extension ConditionalFilter {
     func toBindParams() -> [Any] {
         switch self {
         case .withOperator(field: _, op: _, value: let value):
@@ -161,34 +161,34 @@ func pack(value: Any) -> Any {
     }
 }
 
-public func >(key: String, pred: Any) -> ConditionFilter {
+public func >(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .greaterThan, value: pred)
 }
 
-public func >=(key: String, pred: Any) -> ConditionFilter {
+public func >=(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .greaterThanEqual, value: pred)
 }
 
-public func <(key: String, pred: Any) -> ConditionFilter {
+public func <(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .smallerThan, value: pred)
 }
 
-public func <=(key: String, pred: Any) -> ConditionFilter {
+public func <=(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .smallerThanEqual, value: pred)
 }
 
-public func ==(key: String, pred: Any) -> ConditionFilter {
+public func ==(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .equal, value: pred)
 }
 
-public func !=(key: String, pred: Any) -> ConditionFilter {
+public func !=(key: String, pred: Any) -> ConditionalFilter {
     return .withOperator(field: key, op: .notEqual, value: pred)
 }
 
 public enum ConditionConnector {
-    case `where`(ConditionFilter)
-    case and(ConditionFilter)
-    case or(ConditionFilter)
+    case `where`(ConditionalFilter)
+    case and(ConditionalFilter)
+    case or(ConditionalFilter)
 }
 
 extension Collection where Self.Iterator.Element == ConditionConnector {

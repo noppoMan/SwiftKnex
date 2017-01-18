@@ -7,7 +7,7 @@
 //
 
 struct Having {
-    let condition: ConditionFilter
+    let condition: ConditionalFilter
 }
 
 extension Having {

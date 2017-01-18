@@ -13,7 +13,7 @@ extension Knex {
         return self
     }
     
-    public func `where`(_ filter: ConditionFilter) -> Knex {
+    public func `where`(_ filter: ConditionalFilter) -> Knex {
         if condistions.count == 0 {
             condistions.append(.where(filter))
         } else {
@@ -22,7 +22,7 @@ extension Knex {
         return self
     }
     
-    public func or(_ filter: ConditionFilter) -> Knex {
+    public func or(_ filter: ConditionalFilter) -> Knex {
         condistions.append(.or(filter))
         return self
     }
@@ -47,7 +47,7 @@ extension Knex {
         return self
     }
     
-    public func on(_ filter: ConditionFilter) -> Knex {
+    public func on(_ filter: ConditionalFilter) -> Knex {
         joins.last?.conditions.append(filter)
         return self
     }
@@ -79,7 +79,7 @@ extension Knex {
         return self
     }
     
-    public func having(_ filter: ConditionFilter) -> Knex {
+    public func having(_ filter: ConditionalFilter) -> Knex {
         self.having = Having(condition: filter)
         return self
     }
