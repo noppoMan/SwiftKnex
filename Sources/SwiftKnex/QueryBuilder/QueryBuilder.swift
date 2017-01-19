@@ -50,19 +50,23 @@ public final class QueryBuilder {
     
     var selectFields = [Field]()
     
-    var alias: String?
-    
     public init(){}
     
     @discardableResult
+    public func table(_ t: Table) -> Self {
+        self.table = t
+        return self
+    }
+    
+    @discardableResult
     public func table(_ name: String) -> Self {
-        self.table = .string(name)
+        self.table = Table(name)
         return self
     }
     
     @discardableResult
     public func table(_ qb: QueryBuilder) -> Self {
-        self.table = .queryBuilder(qb)
+        self.table = Table(qb)
         return self
     }
     
@@ -161,11 +165,6 @@ public final class QueryBuilder {
         return self
     }
     
-    public func `as`(_ name: String) -> Self {
-        self.alias = name
-        return self
-    }
-    
     public func build(_ type: QueryType) throws -> QueryBuildable {
         guard let table = self.table else {
             throw QueryBuilderError.tableIsNotSet
@@ -182,8 +181,7 @@ public final class QueryBuilder {
                 group: group,
                 having: having,
                 joins: joins,
-                selectFields: selectFields,
-                alias: alias
+                selectFields: selectFields
             )
             
         case .delete:
@@ -196,8 +194,7 @@ public final class QueryBuilder {
                 group: group,
                 having: having,
                 joins: joins,
-                selectFields: selectFields,
-                alias: alias
+                selectFields: selectFields
             )
             
         case .insert(let values):

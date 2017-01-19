@@ -98,7 +98,8 @@ class SelectTests: XCTestCase {
         rows = try! con.knex().table("test_users").where(("country" == "USA" && "name" == "Jack") || "country" == "Japan").fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table(QueryBuilder().table("test_users").where("country" == "USA").as("table1")).fetch()
+        let t = Table(QueryBuilder().table("test_users").where("country" == "USA")).as("table1")
+        rows = try! con.knex().table(t).fetch()
         
         XCTAssert(rows!.count == 3)
         

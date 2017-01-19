@@ -109,7 +109,14 @@ print(results)
 #### fetch all rows from the results that taken by subquery.
 ```swift
 let results = try knex
-                    .table(QueryBuilder().table("users").where("country" == "USA").as("t1"))
+                    .table(
+                        Table(
+                            QueryBuilder()
+                              .table("users")
+                              .where("country" == "USA")
+                            )
+                        ).as("t1")
+                    )
                     .where("t1.id" == 1)
 
 print(results)
