@@ -54,13 +54,13 @@ public final class Knex {
         return result
     }
     
-    public func table(_ name: String) -> Self {
-        queryBuilder.table(name)
+    public func table(_ t: Table) -> Self {
+        queryBuilder.table(t)
         return self
     }
     
-    public func table(_ qb: QueryBuilder) -> Self {
-        queryBuilder.table(qb)
+    public func table(_ name: String) -> Self {
+        queryBuilder.table(name)
         return self
     }
     

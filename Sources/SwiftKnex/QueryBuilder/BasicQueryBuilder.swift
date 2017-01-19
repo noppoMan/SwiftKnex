@@ -31,8 +31,6 @@ struct BasicQueryBuilder: QueryBuildable {
     
     let selectFields: [Field]
     
-    let alias: String?
-    
     func build() throws -> (String, [Any]) {
         var bindParams = [Any]()
         let (table, params) = try self.table.build()
@@ -70,9 +68,6 @@ struct BasicQueryBuilder: QueryBuildable {
         sql += insertSpace(orders.build())
         sql += insertSpace(limitQuery)
         
-        if let alias = alias {
-            return ("(\((sql))) AS \(alias)", bindParams)
-        }
         return (sql, bindParams)
     }
 }
