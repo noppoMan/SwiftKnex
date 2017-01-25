@@ -325,14 +325,14 @@ and then, `SwiftKnexMigration` executable binary was created in the .build/debug
 
 ### 2. Create Migration file
 
-the next step is creating migration class file into your `Sources/SwiftKnexMigration` directory with `./build/debug/SwiftKnexMigration create {ResourceName}`
+the next step is creating migration class file into your `Sources/Migration` directory with `./build/debug/Migration create {ResourceName}`
 
 here is an example for creating `CreateUser` migration file
 ```
 ./build/debug/SwiftKnexMigration create CreateUser
 
 #
-# Created /YourProject/Sources/SwiftKnexMigration/20170116015823_CreateUser.swift
+# Created /YourProject/Sources/Migration/20170116015823_CreateUser.swift
 #
 ```
 
@@ -378,10 +378,10 @@ class Migration_20170116015823_CreateUser: Migratable {
 ```
 
 
-### 4. Create `main.swift` in the `{$PROJ}/Sources/SwiftKnexMigration`
+### 4. Create `main.swift` in the `{$PROJ}/Sources/Migration`
 
-Create `main.swift` in the `{$PROJ}/Sources/SwiftKnexMigration` directory that is created by `Migrate create` at previous section.  
-And copy/paste the following code into your `{$PROJ}/Sources/SwiftKnexMigration/main.swift` and then, replace the class names in the `knexMigrations` array to correct names, and change the database configuration depending on your environment.
+Create `main.swift` in the `{$PROJ}/Sources/Migration` directory that is created by `Migrate create` at previous section.  
+And copy/paste the following code into your `{$PROJ}/Sources/Migration/main.swift` and then, replace the class names in the `knexMigrations` array to correct names, and change the database configuration depending on your environment.
 
 You need to add the new class name(s) to the `knexMigrations` at every migration resource created.
 
