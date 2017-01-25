@@ -86,7 +86,13 @@ case "create":
         let output = stab.replacingOccurrences(of: "${migrationFileName}", with: fileName)
         
         let pwd = FileManager.default.currentDirectoryPath
-        let destination = "\(pwd)/Sources/Migration/\(fileName).swift"
+        
+        let migrationRoot = "\(pwd)/Sources/Migration/"
+        if !FileManager.default.fileExists(atPath: migrationRoot) {
+            try FileManager.default.createDirectory(atPath: migrationRoot, withIntermediateDirectories: false, attributes: [:])
+        }
+        
+        let destination = "\(migrationRoot)/\(fileName).swift"
         try output.write(toFile: destination, atomically: true, encoding: .utf8)
         
         print("\n Created \(destination) \n")
