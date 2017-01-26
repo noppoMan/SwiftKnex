@@ -329,7 +329,7 @@ the next step is creating migration class file into your `Sources/Migration` dir
 
 here is an example for creating `CreateUser` migration file
 ```
-./build/debug/SwiftKnexMigration create CreateUser
+.build/debug/SwiftKnexMigration create CreateUser
 
 #
 # Created /YourProject/Sources/Migration/20170116015823_CreateUser.swift
@@ -416,12 +416,12 @@ After that, you only need to run the migration
 
 #### Try to perform Migration
 ```
-./build/debug/Migration migrate:latest
+.build/debug/Migration migrate:latest
 ```
 
 #### Try to perform Rollback
 ```
-./build/debug/Migration migrate:rollback
+.build/debug/Migration migrate:rollback
 ```
 
 #### Seed
