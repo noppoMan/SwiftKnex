@@ -288,7 +288,7 @@ try knex().execRaw(sql: create.toDDL())
 
 # Drop
 ```swift
-let drop = Drop(table: "uesrs")
+let drop = Drop(table: "users")
 try knex().execRaw(sql: drop.toDDL())
 ```
 
