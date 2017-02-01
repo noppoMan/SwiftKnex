@@ -273,6 +273,7 @@ try knex().execRaw(sql: create.toDDL())
 | Float        | FLOAT          |
 | Double       | DOUBLE         |
 | Boolean      | TINYINT(1)     |
+| JSON         | JSON           |
 
 ### Functions for adding field attributes
 * `default(as value: Any)`
