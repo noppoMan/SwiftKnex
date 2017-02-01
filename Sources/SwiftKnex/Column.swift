@@ -37,7 +37,7 @@ public struct Column: Field, ExpressibleByStringLiteral {
     }
 }
 
-extension Column: CustomStringConvertible {
+extension Column {
     public var description: String {
         return build()
     }

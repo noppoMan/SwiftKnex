@@ -23,6 +23,7 @@ public enum QueryType {
     case select
     case delete
     case update([String: Any])
+    case updateRaw(query: String, params: [Any]) // query
     case insert([String: Any])
     case batchInsert([[String: Any]])
     case forUpdate([String: Any])
@@ -212,7 +213,19 @@ public final class QueryBuilder {
                 group: group,
                 having: having,
                 joins: joins,
-                sets: sets
+                setValue: .dictionary(sets)
+            )
+            
+        case .updateRaw(query: let query, params: let params):
+            return UpdateQueryBuilder(
+                table: table,
+                condistions: condistions,
+                limit: limit,
+                orders: orders,
+                group: group,
+                having: having,
+                joins: joins,
+                setValue: .raw(query: query, params: params)
             )
         
         default:

@@ -107,4 +107,5 @@ enum FieldTypes: UInt8 {
     case varString  = 0xfd // []byte
     case string     = 0xfe // string
     case geometory  = 0xff
+    case json       = 0xf5
 }

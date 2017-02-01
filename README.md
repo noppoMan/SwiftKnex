@@ -10,12 +10,12 @@ This library is powerded by [Prorsum](https://github.com/noppoman/Prorsum)
 * [x] Pure Swift Implementation(doesn't depend on libmysqlclient)
 * [x] Expressive querying
 * [x] Supporting Database Migration and Rollback
+* [x] Supported Mysql 5.7 JSON Data Type
 * [ ] Async I/O
 
 ## TODO
 * BlobType
 * GeoType
-* JSON Schema
 * Investigate Performance
 * Async I/O Mode
 * Documentation

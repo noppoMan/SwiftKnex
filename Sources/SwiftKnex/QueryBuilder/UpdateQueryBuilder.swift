@@ -8,6 +8,11 @@
 
 struct UpdateQueryBuilder: QueryBuildable {
     
+    enum SetValue {
+        case raw(query: String, params: [Any])
+        case dictionary([String: Any])
+    }
+    
     let table: Table
     
     let condistions: [ConditionConnector]
@@ -22,11 +27,20 @@ struct UpdateQueryBuilder: QueryBuildable {
     
     let joins: [Join]
     
-    let sets: [String: Any]
+    let setValue: SetValue
     
     func build() throws -> (String, [Any]) {
-        let setQuery = sets.map({ "\($0.key) = ?" }).joined(separator: ", ")
-        var bindParams = sets.map({ $0.value })
+        let setQuery: String
+        var bindParams: [Any]
+        switch setValue {
+        case .dictionary(let sets):
+            setQuery = sets.map({ "\($0.key) = ?" }).joined(separator: ", ")
+            bindParams = sets.map({ $0.value })
+            
+        case .raw(query: let query, params: let params):
+            setQuery = query
+            bindParams = params
+        }
         
         let condistionQuery = try condistions.build()
         try bindParams.append(contentsOf: condistions.bindParams())
@@ -50,6 +64,14 @@ struct UpdateQueryBuilder: QueryBuildable {
         sql += insertSpace(havingQuery)
         sql += insertSpace(orders.build())
         sql += insertSpace(limitQuery)
+        
+        print("----------------------------------")
+//        
+//        bindParams.map({
+//            
+//        })
+        
+        print(bindParams)
         
         return (sql, bindParams)
     }

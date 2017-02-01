@@ -43,6 +43,10 @@ extension Knex {
         return try execute(.update(sets), trx).asQueryStatus()
     }
     
+    public func update(query: String, params: [Any] = [], trx: Connection? = nil) throws -> QueryStatus? {
+        return try execute(.updateRaw(query: query, params: params), trx).asQueryStatus()
+    }
+    
     public func delete(trx: Connection? = nil) throws -> QueryStatus? {
         return try execute(.delete, trx).asQueryStatus()
     }
