@@ -152,7 +152,7 @@ class SelectTests: XCTestCase {
     
     func testHaving(){
         var rows: ResultSet?
-        rows = try! con.knex().select(count("id").as("count"), col("country"), col("age")).table("test_users").group(by: "country").having("age" > 50).fetch()
+        rows = try! con.knex().select(count("id").as("count"), col("country")).table("test_users").group(by: "country").having("count" > 2).fetch()
         
         rows?.forEach {
             guard let country = $0["country"] as? String else {
@@ -161,7 +161,7 @@ class SelectTests: XCTestCase {
             
             switch country {
             case "USA":
-                XCTAssertEqual($0["count"] as! Int64, 2)
+                XCTAssertEqual($0["count"] as! Int64, 3)
             default:
                 break
             }

@@ -94,7 +94,7 @@ class BinaryRowDataPacket: RowDataParsable {
                     pos += n
                 }
 
-            case .decimal, .newdecimal, .bit, .`enum`, .set, .geometory:
+            case .decimal, .newdecimal, .bit, .`enum`, .set, .geometory, .json:
                 let (str, n) = lenEncStr(Array(bytes[pos..<bytes.count]))
                 row[column.name] = str
                 pos += n

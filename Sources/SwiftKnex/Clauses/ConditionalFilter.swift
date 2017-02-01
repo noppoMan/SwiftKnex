@@ -21,6 +21,11 @@ public enum ConditionalFilterError: Error {
     case unrecognizedFilter
 }
 
+public protocol FilterQueryBuildable {
+    func toBindParams() throws -> [Any]
+    func toQuery(secure: Bool) throws -> String
+}
+
 public indirect enum ConditionalFilter {
     // basics
     case withOperator(field: String, op: Operator, value: Any)
@@ -37,11 +42,11 @@ public indirect enum ConditionalFilter {
     case orComparison(ConditionalFilter, ConditionalFilter)
     
     // raw
-    case raw(String)
+    case raw(String, [Any])
 }
 
-extension ConditionalFilter {
-    func toBindParams() throws -> [Any] {
+extension ConditionalFilter: FilterQueryBuildable {
+    public func toBindParams() throws -> [Any] {
         switch self {
         case .withOperator(_, op: _, let value):
             return [pack(value: value)]
@@ -77,13 +82,10 @@ extension ConditionalFilter {
         case .notBetween(_, let from, let to):
             return [pack(value: from), pack(value: to)]
             
-        case .isNull(field: _):
+        case .isNull(_):
             return []
             
-        case .isNotNull(field: _):
-            return []
-            
-        case .raw(query: _):
+        case .isNotNull(_):
             return []
             
         case .andComparison(let aFilter, let bFilter):
@@ -91,12 +93,14 @@ extension ConditionalFilter {
             
         case .orComparison(let aFilter, let bFilter):
             return try aFilter.toBindParams() + bFilter.toBindParams()
+            
+        case .raw(_, let params):
+            return params
         }
-        
         throw ConditionalFilterError.unrecognizedFilter
     }
     
-    func toQuery(secure: Bool = true) throws -> String {
+    public func toQuery(secure: Bool = true) throws -> String {
         switch self {
         case .withOperator(let field, let op, let value):
             if !secure {
@@ -164,16 +168,15 @@ extension ConditionalFilter {
         case .isNotNull(let field):
             return "\(pack(key: field)) IS NOT NULL"
             
-        case .raw(let query):
-            return query
-            
         case .andComparison(let aFilter, let bFilter):
             return try "(\(aFilter.toQuery()) AND \(bFilter.toQuery()))"
             
         case .orComparison(let aFilter, let bFilter):
             return try "(\(aFilter.toQuery()) OR \(bFilter.toQuery()))"
+            
+        case .raw(let query, _):
+            return query
         }
-        
         throw ConditionalFilterError.unrecognizedFilter
     }
 }
@@ -217,6 +220,14 @@ func pack(value: Any) -> Any {
         
     case let v as Date:
         return v.dateTimeString()
+        
+    case let v as [String: Any]:
+        do {
+            let data = try JSONSerialization.data(withJSONObject: v, options: [])
+            return String(data: data, encoding: .utf8) ?? "{}"
+        } catch {
+            return "{}"
+        }
         
     default:
         return "\(value)"

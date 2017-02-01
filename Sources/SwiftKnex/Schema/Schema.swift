@@ -149,6 +149,14 @@ public struct Schema {
                 }
             }
         }
+        
+        public struct JSON: FieldType {
+            public init(){}
+            
+            public func build() -> Swift.String {
+                return "JSON"
+            }
+        }
     }
     
     public enum Charset {

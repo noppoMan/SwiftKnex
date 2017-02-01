@@ -8,11 +8,11 @@ public struct AggregateColumnExpression: Field {
         self.function = function
     }
     
-    public func build() -> String {
+    public func build() throws -> String {
         if let alias = alias {
-            return "\(function.build()) AS " + pack(key: alias)
+            return try "\(function.build()) AS " + pack(key: alias)
         } else {
-            return function.build()
+            return try function.build()
         }
     }
 
@@ -31,34 +31,34 @@ public struct AggregateColumnExpression: Field {
         case mid(field: Field, start: Int, length: Int)
         case len(field: Field)
         
-        public func build() -> String {
+        public func build() throws -> String {
             switch self {
             case .avg(let field):
-                return "AVG(" + field.build() + ")"
+                return try "AVG(" + field.build() + ")"
             case .max(let field):
-                return "MAX(" + field.build() + ")"
+                return try "MAX(" + field.build() + ")"
             case .min(let field):
-                return "MIN(" + field.build() + ")"
+                return try "MIN(" + field.build() + ")"
             case .sum(let field):
-                return "SUM(" + field.build() + ")"
+                return try "SUM(" + field.build() + ")"
             case .last(let field):
-                return "LAST(" + field.build() + ")"
+                return try "LAST(" + field.build() + ")"
             case .first(let field):
-                return "FIRST(" + field.build() + ")"
+                return try "FIRST(" + field.build() + ")"
             case .count(let field):
-                return "COUNT(" + field.build() + ")"
+                return try "COUNT(" + field.build() + ")"
             case .countDistinct(let field):
-                return "COUNT(DISTINCT(" + field.build() + "))"
+                return try "COUNT(DISTINCT(" + field.build() + "))"
 //            case .ucase(let field):
 //                return try queryBuilder.substitutions[QueryBuilder.QuerySubstitutionNames.ucase.rawValue] + "(" + field.build() + ")"
 //            case .lcase(let field):
 //                return try queryBuilder.substitutions[QueryBuilder.QuerySubstitutionNames.lcase.rawValue] + "(" + field.build() + ")"
             case .round(let field, let decimal):
-                return "ROUND(" + field.build() + ", \(decimal))"
+                return try "ROUND(" + field.build() + ", \(decimal))"
             case .mid(let field, let start, let length):
-                return "MID(" + field.build() + ", \(start), \(length))"
+                return try "MID(" + field.build() + ", \(start), \(length))"
             case .len(let field):
-                return "LEN(" + field.build() + ")"
+                return try "LEN(" + field.build() + ")"
             }
         }
     }
@@ -66,7 +66,11 @@ public struct AggregateColumnExpression: Field {
 
 extension AggregateColumnExpression: CustomStringConvertible {
     public var description: String {
-        return build()
+        do {
+            return try build()
+        } catch {
+            return ""
+        }
     }
 }
 

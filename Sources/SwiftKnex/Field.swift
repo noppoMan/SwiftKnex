@@ -11,6 +11,6 @@ extension AliasAttacheble {
     }
 }
 
-public protocol Field: AliasAttacheble {
-    func build() -> String
+public protocol Field: AliasAttacheble, CustomStringConvertible {
+    func build() throws -> String
 }
