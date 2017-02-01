@@ -54,9 +54,6 @@ public protocol Migratable: class {
 
 func validateMigration(name: String) throws -> String {
     let segments = name.components(separatedBy: "_")
-    if segments.count != 3 {
-        throw MigrationError.invalidMigrationName(name)
-    }
     
     if segments[0] != "Migration" {
         throw MigrationError.invalidMigrationName(name)
@@ -126,25 +123,32 @@ class MigrateRunner {
                     try m.up(Migrator(trx: trx))
                     recentMigrated.append(name)
                 }
+                
                 try markLatest(batch: 1, migrationNames: recentMigrated, trx: trx)
+            } else {
+                // check migration corruption
+                try checkMigrationCorruption(migrationsPeformed)
+                
+                // After second times
+                for m in knexMigrations {
+                    let name = try validateMigration(name: m.name)
+                    if migrationsPeformed.contains(where: { $0.name == name }) {
+                        continue
+                    }
+                    
+                    try m.up(Migrator(trx: trx))
+                    recentMigrated.append(name)
+                }
+                
+                try markLatest(batch: migrationsPeformed.lastBatch()+1, migrationNames: recentMigrated, trx: trx)
+            }
+            
+            if recentMigrated.isEmpty {
+                print("Already up to date")
                 return
             }
             
-            // check migration corruption
-            try checkMigrationCorruption(migrationsPeformed)
-            
-            // After second times
-            for m in knexMigrations {
-                let name = try validateMigration(name: m.name)
-                if migrationsPeformed.contains(where: { $0.name == name }) {
-                    continue
-                }
-                
-                try m.up(Migrator(trx: trx))
-                recentMigrated.append(name)
-            }
-            
-            try markLatest(batch: migrationsPeformed.lastBatch()+1, migrationNames: recentMigrated, trx: trx)
+            print("Migrations are finished successfully \n\n" + recentMigrated.map({ "  \($0)" }).joined(separator: "\n"))
         }
     }
     
@@ -152,6 +156,7 @@ class MigrateRunner {
         try con.knex().transaciton { trx in
             let migrationsPeformed = try fetchMigrations(trx: trx)
             if migrationsPeformed.isEmpty {
+                print("Already up to date")
                 return
             }
             
@@ -179,6 +184,8 @@ class MigrateRunner {
                 .table(con.config.migration.table)
                 .where(.in("id", deleteIDs))
                 .delete(trx: trx)
+            
+            print("Rollbacked last batch items: batch no \(lastBatch)")
         }
     }
     
