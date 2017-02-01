@@ -14,7 +14,8 @@ class JSONDataTypeTests: XCTestCase {
     
     static var allTests : [(String, (JSONDataTypeTests) -> () throws -> Void)] {
         return [
-            ("testSelect", testSelect)
+            ("testSelect", testSelect),
+            ("testUpdate", testUpdate)            
         ]
     }
     
