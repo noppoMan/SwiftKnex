@@ -152,8 +152,8 @@ final class Statement {
                     }
                     
                 case let param as String:
-                    if param.characters.count < maxPackAllowed - 1024*1024 {
-                        let lenArr = lenEncIntArray(UInt64(param.characters.count))
+                    if param.utf8.count < maxPackAllowed - 1024*1024 {
+                        let lenArr = lenEncIntArray(UInt64(param.utf8.count))
                         dataTypes += [UInt8].UInt16Array(UInt16(FieldTypes.string.rawValue))
                         args += lenArr
                         args += [UInt8](param.utf8)
