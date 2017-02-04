@@ -23,7 +23,7 @@ class JoinTests: XCTestCase {
     override func setUp() {
         con = try! KnexConnection(config: basicKnexConfig())
         dropTable()
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             _ = try! con.knex().execRaw(trx: trx, sql: testUserSchema().toDDL())
             _ = try! con.knex().insert(into: "test_users", collection: testUserCollection(), trx: trx)
 
@@ -38,7 +38,7 @@ class JoinTests: XCTestCase {
     }
     
     func dropTable(){
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             do {
                 _ = try con.knex().execRaw(trx: trx, sql: Drop(table: "test_users").toDDL())
             } catch {

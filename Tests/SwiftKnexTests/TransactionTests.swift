@@ -24,7 +24,7 @@ class TransactionTests: XCTestCase {
     override func setUp() {
         con = try! KnexConnection(config: basicKnexConfig())
         dropTable()
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             _ = try! con.knex().execRaw(trx: trx, sql: testUserSchema().toDDL())
         }
     }
@@ -43,7 +43,7 @@ class TransactionTests: XCTestCase {
     }
     
     func testTransactionCommit(){
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             XCTAssertEqual(con.knex().connection.availableConnection, 3)
             _ = try con.knex().insert(into: "test_users", collection: testUserCollection(), trx: trx)
             _ = try con.knex().table("test_users").where("id" == 1).update(sets: ["age": 10], trx: trx)
@@ -59,7 +59,7 @@ class TransactionTests: XCTestCase {
     
     func testTransactionRollback() {
         do {
-            try con.knex().transaciton { trx in
+            try con.knex().transaction { trx in
                 XCTAssertEqual(con.knex().connection.availableConnection, 3)
                 _ = try con.knex().insert(into: "test_users", collection: testUserCollection(), trx: trx)
                 _ = try con.knex().table("test_users").where("id" == 1).update(sets: ["age": 10], trx: trx)

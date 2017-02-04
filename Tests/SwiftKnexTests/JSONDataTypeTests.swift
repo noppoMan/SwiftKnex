@@ -29,7 +29,7 @@ class JSONDataTypeTests: XCTestCase {
             Schema.Field(name: "body", type: Schema.Types.JSON())
         ])
         
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             _ = try! con.knex().execRaw(trx: trx, sql: jsonTable.toDDL())
             let json: [String: Any] = [
                 "name": "Luke",

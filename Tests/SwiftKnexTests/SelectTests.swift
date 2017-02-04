@@ -28,7 +28,7 @@ class SelectTests: XCTestCase {
     override func setUp() {
         con = try! KnexConnection(config: basicKnexConfig())
         dropTable()
-        try! con.knex().transaciton { trx in
+        try! con.knex().transaction { trx in
             _ = try! con.knex().execRaw(trx: trx, sql: testUserSchema().toDDL())
             _ = try! con.knex().insert(into: "test_users", collection: testUserCollection(), trx: trx)
         }
