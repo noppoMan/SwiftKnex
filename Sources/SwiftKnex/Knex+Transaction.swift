@@ -8,7 +8,7 @@
 
 extension Knex {
     
-    public func transaciton(_ callback: (Connection) throws -> Void) throws {
+    public func transaction(_ callback: (Connection) throws -> Void) throws {
         try self.connection.transaction { trx in
             try callback(trx)
         }

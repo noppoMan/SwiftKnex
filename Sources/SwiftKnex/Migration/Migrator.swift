@@ -112,7 +112,7 @@ class MigrateRunner {
     }
     
     func up() throws {
-        try con.knex().transaciton { trx in
+        try con.knex().transaction { trx in
             var recentMigrated = [String]()
             let migrationsPeformed = try fetchMigrations(trx: trx)
             
@@ -153,7 +153,7 @@ class MigrateRunner {
     }
     
     func down() throws {
-        try con.knex().transaciton { trx in
+        try con.knex().transaction { trx in
             let migrationsPeformed = try fetchMigrations(trx: trx)
             if migrationsPeformed.isEmpty {
                 print("Already up to date")
