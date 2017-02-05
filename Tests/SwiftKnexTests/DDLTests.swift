@@ -46,7 +46,7 @@ class DDLTests: XCTestCase {
             Schema.Field(name: "f1", type: Schema.Types.String()).asUnique().asNotNullable(),
             Schema.Field(name: "f2", type: Schema.Types.Text()),
             Schema.Field(name: "f3", type: Schema.Types.MediumText()),
-            Schema.Field(name: "f4", type: Schema.Types.BigInteger()).asUngisned().default(to: 0),
+            Schema.Field(name: "f4", type: Schema.Types.BigInteger()).asUnsigned().default(to: 0),
             Schema.Field(name: "f5", type: Schema.Types.DateTime()).asIndex(),
             Schema.Field(name: "f6", type: Schema.Types.Float()),
             Schema.Field(name: "f7", type: Schema.Types.Double()),
