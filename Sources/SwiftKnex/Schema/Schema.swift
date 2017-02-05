@@ -219,7 +219,7 @@ public struct Schema {
             return self
         }
         
-        public func asUngisned() -> Field {
+        public func asUnsigned() -> Field {
             self.isUnsigned = true
             return self
         }

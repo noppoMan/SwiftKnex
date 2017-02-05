@@ -281,7 +281,7 @@ try knex().execRaw(sql: create.toDDL())
 * `asPrimaryKey()`
 * `asAutoIncrement()`
 * `asNotNullable()`
-* `asUngisned()`
+* `asUnsigned()`
 * `charset(_ char: Charset)`
 * `asUnique()`
 * `asIndex()`
