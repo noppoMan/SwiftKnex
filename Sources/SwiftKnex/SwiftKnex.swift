@@ -129,4 +129,7 @@ public final class Knex {
         return self
     }
     
+    public func fresh() -> Knex {
+        return Knex(config: config, connection: connection)
+    }
 }
