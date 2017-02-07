@@ -248,10 +248,10 @@ do {
 # Create
 ```swift
 let create = Create(table: "users", fields: [
-    Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-    Schema.Field(name: "name", type: Schema.Types.String()),
-    Schema.Field(name: "email", type: Schema.Types.String()).asUnique(),
-    Schema.Field(name: "last_logined_at", type: Schema.Types.DateTime()).asIndex()
+    Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+    Schema.string("name"),
+    Schema.string("email").asUnique(),
+    Schema.datetime("last_logined_at").asIndex()
 ])
 .hasTimeStamps() // add created_at and updated_at
 
@@ -262,18 +262,18 @@ try knex().execRaw(sql: create.toDDL())
 
 ### Schema Types Comparison
 
-| Schema.Types  | Mysql Type    |
-| ------------- |:-------------:|
-| String       | VARCHAR        |
-| Integer      | INT            |
-| BigInteger   | BIGIMT         |
-| DateTime     | DATETIME       |
-| Text         | TEXT           |
-| MediumText   | MEDIUMTEXT     |
-| Float        | FLOAT          |
-| Double       | DOUBLE         |
-| Boolean      | TINYINT(1)     |
-| JSON         | JSON           |
+| SwiftKnex           |  Mysql Type    |
+| ------------------- |:--------------:|
+| Schema.string       | VARCHAR        |
+| Schema.integer      | INT            |
+| Schema.bigInteger   | BIGIMT         |
+| Schema.dateTime     | DATETIME       |
+| Schema.text         | TEXT           |
+| Schema.mediumText   | MEDIUMTEXT     |
+| Schema.float        | FLOAT          |
+| Schema.double       | DOUBLE         |
+| Schema.boolean      | TINYINT(1)     |
+| Schema.json         | JSON           |
 
 ### Functions for adding field attributes
 * `default(as value: Any)`
@@ -362,9 +362,9 @@ class Migration_20170116015823_CreateUser: Migratable {
        let create = Create(
            table: "users",
            fields: [
-               Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-               Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
-               Schema.Field(name: "email", type: Schema.Types.String()).asUnique().asNotNullable()
+               Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+               Schema.string("name").asIndex().asNotNullable(),
+               Schema.string("email").asUnique().asNotNullable()
            ])
            .hasTimestamps()
            .index(columns: ["name", "email"], unique: true)

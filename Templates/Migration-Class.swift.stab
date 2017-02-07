@@ -7,23 +7,18 @@ class Migration_${migrationFileName}: Migratable {
     }
 
     func up(_ migrator: Migrator) throws {
-
-//        let create = Create(
+//        let tests = Create(
 //            table: "tests",
 //            fields: [
-//                Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-//                Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
+//                Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+//                Schema.string("name").asIndex().asNotNullable(),
 //            ])
 //            .hasTimestamps()
-//            .index(columns: ["name", "email"], unique: true)
 //
-//        try migrator.run(create)
-
+//        try migrator.run(tests)
     }
 
     func down(_ migrator: Migrator) throws {
-
 //        try migrator.run(Drop(table: "tests"))
-
     }
 }

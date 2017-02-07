@@ -65,12 +65,6 @@ struct UpdateQueryBuilder: QueryBuildable {
         sql += insertSpace(orders.build())
         sql += insertSpace(limitQuery)
         
-        print("----------------------------------")
-//        
-//        bindParams.map({
-//            
-//        })
-        
         print(bindParams)
         
         return (sql, bindParams)

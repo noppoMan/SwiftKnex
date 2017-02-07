@@ -228,10 +228,10 @@ class MigrateRunner {
         }
         
         let createDDL = Create(table: con.config.migration.table, fields: [
-            Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-            Schema.Field(name: "name", type: Schema.Types.String()),
-            Schema.Field(name: "batch", type: Schema.Types.Integer()),
-            Schema.Field(name: "migration_time", type: Schema.Types.DateTime()).asNotNullable()
+            Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+            Schema.string("name"),
+            Schema.integer("batch"),
+            Schema.datetime("migration_time")
         ])
         
         _ = try con.knex().execRaw(sql: createDDL.toDDL())

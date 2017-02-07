@@ -19,9 +19,9 @@ class Migration_20170101000000_CreateEmployee: Migratable {
         let create = Create(
             table: "employees",
             fields: [
-                Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-                Schema.Field(name: "name", type: Schema.Types.String()).asIndex().asNotNullable(),
-                Schema.Field(name: "company_id", type: Schema.Types.Integer()).asIndex().asNotNullable()
+                Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+                Schema.string("name").asIndex().asNotNullable(),
+                Schema.integer("company_id").asIndex().asNotNullable()
             ])
             .hasTimestamps()
 
@@ -42,8 +42,8 @@ class Migration_20170102000000_CreateCompany: Migratable {
         let create = Create(
             table: "companies",
             fields: [
-                Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-                Schema.Field(name: "name", type: Schema.Types.String()).asNotNullable()
+                Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+                Schema.string("name").asNotNullable()
             ])
             .hasTimestamps()
         

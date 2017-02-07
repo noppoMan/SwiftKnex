@@ -12,152 +12,7 @@ public enum SchemaError: Error {
     case primaryKeyShouldBeOnlyOne
 }
 
-public protocol FieldType {
-    func build() -> Swift.String
-}
-
-public protocol BasicFieldType: FieldType {
-    var length: Int { get }
-    var fieldType: Swift.String { get }
-}
-
-extension BasicFieldType {
-    public func build() -> Swift.String {
-        return "\(fieldType)(\(length))"
-    }
-}
-
 public struct Schema {
-    
-    public struct Types {
-        public struct Integer: BasicFieldType {
-            public let length: Int
-            
-            public var fieldType: Swift.String {
-                return "INT"
-            }
-            
-            public init(length: Int = 11){
-                self.length = length
-            }
-        }
-        
-        public struct BigInteger: BasicFieldType {
-            public let length: Int
-            
-            public var fieldType: Swift.String {
-                return "BIGINT"
-            }
-            
-            public init(length: Int = 20){
-                self.length = length
-            }
-        }
-        
-        public struct String: BasicFieldType {
-            public let length: Int
-            
-            public var fieldType: Swift.String {
-                return "VARCHAR"
-            }
-            
-            public init(length: Int = 255){
-                self.length = length
-            }
-        }
-        
-        public struct Text: FieldType {
-            public let length: Int?
-            
-            public init(length: Int? = nil){
-                self.length = length
-            }
-            
-            public func build() -> Swift.String {
-                if let length = self.length {
-                    return "TEXT(\(length))"
-                } else {
-                    return "TEXT"
-                }
-            }
-        }
-        
-        public struct MediumText: FieldType {
-            public let length: Int?
-            
-            public init(length: Int? = nil){
-                self.length = length
-            }
-            
-            public func build() -> Swift.String {
-                if let length = self.length {
-                    return "MEDIUMTEXT(\(length))"
-                } else {
-                    return "MEDIUMTEXT"
-                }
-            }
-        }
-        
-        public struct Boolean: FieldType {
-            public init(){}
-            
-            public func build() -> Swift.String {
-                return "TINYINT(1)"
-            }
-        }
-        
-        public struct DateTime: FieldType {
-            public init(){}
-            
-            public func build() -> Swift.String {
-                return "DATETIME"
-            }
-        }
-        
-        public struct Float: FieldType {
-            let digits: Int?
-            let decimalDigits: Int?
-            
-            public init(digits: Int? = nil, decimalDigits: Int? = nil){
-                self.digits = digits
-                self.decimalDigits = digits
-            }
-            
-            public func build() -> Swift.String {
-                if let digits = self.digits, let decimalDigits = self.decimalDigits {
-                    return "FLOAT(\(digits), \(decimalDigits))"
-                } else {
-                    return "FLOAT"
-                }
-            }
-        }
-        
-        public struct Double: FieldType {
-            let digits: Int?
-            let decimalDigits: Int?
-            
-            public init(digits: Int? = nil, decimalDigits: Int? = nil){
-                self.digits = digits
-                self.decimalDigits = digits
-            }
-            
-            public func build() -> Swift.String {
-                if let digits = self.digits, let decimalDigits = self.decimalDigits {
-                    return "Double(\(digits), \(decimalDigits))"
-                } else {
-                    return "Double"
-                }
-            }
-        }
-        
-        public struct JSON: FieldType {
-            public init(){}
-            
-            public func build() -> Swift.String {
-                return "JSON"
-            }
-        }
-    }
     
     public enum Charset {
         case utf8
@@ -262,8 +117,8 @@ public struct Schema {
         let forUpdated: Schema.Field
         
         public init(forCreated: String = "created_at", forUpdated: String = "updated_at"){
-            self.forCreated = Schema.Field(name: forCreated, type: Schema.Types.DateTime())
-            self.forUpdated = Schema.Field(name: forUpdated, type: Schema.Types.DateTime())
+            self.forCreated = Schema.datetime(forCreated)
+            self.forUpdated = Schema.datetime(forUpdated)
         }
     }
     
@@ -384,5 +239,111 @@ public struct Schema {
             }
             return primaryKey
         }
+    }
+}
+
+
+extension Schema {
+    public enum FieldType {
+        case integer(length: Int)
+        case bigInteger(length: Int)
+        case string(length: Int)
+        case text(length: Int?)
+        case mediumText(length: Int?)
+        case float(digits: Int?, decimalDigits: Int?)
+        case double(digits: Int?, decimalDigits: Int?)
+        case boolean
+        case datetime
+        case json
+        
+        func build() -> Swift.String {
+            switch self {
+            case .integer(length: let length):
+                return "INT(\(length))"
+                
+            case .bigInteger(length: let length):
+                return "BIGINT(\(length))"
+                
+            case .string(length: let length):
+                return "VARCHAR(\(length))"
+                
+            case .text(length: let length):
+                if let length = length {
+                    return "TEXT(\(length))"
+                } else {
+                    return "TEXT"
+                }
+                
+            case .mediumText(length: let length):
+                if let length = length {
+                    return "MEDIUMTEXT(\(length))"
+                } else {
+                    return "MEDIUMTEXT"
+                }
+                
+            case .float(digits: let _digits, decimalDigits: let _decimalDigits):
+                if let digits = _digits, let decimalDigits = _decimalDigits {
+                    return "FLOAT(\(digits), \(decimalDigits))"
+                } else {
+                    return "FLOAT"
+                }
+                
+            case .double(digits: let _digits, decimalDigits: let _decimalDigits):
+                if let digits = _digits, let decimalDigits = _decimalDigits {
+                    return "Double(\(digits), \(decimalDigits))"
+                } else {
+                    return "Double"
+                }
+                
+            case .boolean:
+                return "TINYINT(1)"
+                
+            case .datetime:
+                return "DATETIME"
+                
+            case .json:
+                return "JSON"
+            }
+        }
+    }
+    
+    public static func integer(_ name: String, length: Int = 11) -> Field {
+        return Field(name: name, type: .integer(length: length))
+    }
+    
+    public static func bigInteger(_ name: String, length: Int = 20) -> Field {
+        return Field(name: name, type: .bigInteger(length: length))
+    }
+    
+    public static func string(_ name: String, length: Int = 255) -> Field {
+        return Field(name: name, type: .string(length: length))
+    }
+    
+    public static func text(_ name: String, length: Int? = nil) -> Field {
+        return Field(name: name, type: .text(length: length))
+    }
+    
+    public static func mediumText(_ name: String, length: Int? = nil) -> Field {
+        return Field(name: name, type: .mediumText(length: length))
+    }
+    
+    public static func float(_ name: String, digits: Int? = nil, decimalDigits: Int? = nil) -> Field {
+        return Field(name: name, type: .float(digits: digits, decimalDigits: decimalDigits))
+    }
+    
+    public static func double(_ name: String, digits: Int? = nil, decimalDigits: Int? = nil) -> Field {
+        return Field(name: name, type: .double(digits: digits, decimalDigits: decimalDigits))
+    }
+    
+    public static func boolean(_ name: String) -> Field {
+        return Field(name: name, type: .boolean)
+    }
+    
+    public static func datetime(_ name: String) -> Field {
+        return Field(name: name, type: .datetime)
+    }
+    
+    public static func json(_ name: String) -> Field {
+        return Field(name: name, type: .json)
     }
 }
