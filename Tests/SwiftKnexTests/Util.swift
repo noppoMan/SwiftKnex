@@ -68,9 +68,9 @@ func basicKnexConfig() -> KnexConfig {
 
 func testUserLastLoginSchema() -> Create {
     return Create(table: "test_user_last_logins", fields: [
-        Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-        Schema.Field(name: "user_id", type: Schema.Types.Integer()).asUnique(),
-        Schema.Field(name: "last_logined_at", type: Schema.Types.DateTime()).asIndex()
+        Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+        Schema.integer("user_id").asUnique(),
+        Schema.datetime("last_logined_at").asIndex()
     ])
 }
 
@@ -93,11 +93,11 @@ func testUserLastLoginCollection() -> [[String: Any]] {
 
 func testUserSchema() -> Create {
     return Create(table: "test_users", fields: [
-        Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-        Schema.Field(name: "email", type: Schema.Types.String()).asUnique(),
-        Schema.Field(name: "name", type: Schema.Types.String()).asNotNullable(),
-        Schema.Field(name: "age", type: Schema.Types.Integer()).asNotNullable(),
-        Schema.Field(name: "Country", type: Schema.Types.String()),
+        Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+        Schema.string("email").asUnique(),
+        Schema.string("name").asNotNullable(),
+        Schema.integer("age").asNotNullable(),
+        Schema.string("Country")
     ])
 }
 

@@ -42,19 +42,20 @@ class DDLTests: XCTestCase {
     
     func testCreate(){
         let create = Create(table: "test_users", fields: [
-            Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-            Schema.Field(name: "f1", type: Schema.Types.String()).asUnique().asNotNullable(),
-            Schema.Field(name: "f2", type: Schema.Types.Text()),
-            Schema.Field(name: "f3", type: Schema.Types.MediumText()),
-            Schema.Field(name: "f4", type: Schema.Types.BigInteger()).asUnsigned().default(to: 0),
-            Schema.Field(name: "f5", type: Schema.Types.DateTime()).asIndex(),
-            Schema.Field(name: "f6", type: Schema.Types.Float()),
-            Schema.Field(name: "f7", type: Schema.Types.Double()),
-            Schema.Field(name: "f8", type: Schema.Types.Boolean()).asIndex()
+            Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+            Schema.string("f1").asUnique().asNotNullable(),
+            Schema.text("f2"),
+            Schema.mediumText("f3"),
+            Schema.bigInteger("f4").asUnsigned().default(to: 0),
+            Schema.datetime("f5"),
+            Schema.float("f6"),
+            Schema.double("f7"),
+            Schema.boolean("f8").asIndex(),
+            Schema.json("f9")
         ])
         .hasTimestamps()
         
-        try! con.knex().execRaw(sql: create.toDDL())
+        _ = try! con.knex().execRaw(sql: create.toDDL())
     }
 }
 

@@ -26,8 +26,8 @@ class JSONDataTypeTests: XCTestCase {
         dropTable()
         
         let jsonTable = Create(table: "json_table", fields: [
-            Schema.Field(name: "id", type: Schema.Types.Integer()).asPrimaryKey().asAutoIncrement(),
-            Schema.Field(name: "body", type: Schema.Types.JSON())
+            Schema.integer("id").asPrimaryKey().asAutoIncrement(),
+            Schema.json("body")
         ])
         
         try! con.knex().transaction { trx in
