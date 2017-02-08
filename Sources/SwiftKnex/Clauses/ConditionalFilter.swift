@@ -27,31 +27,30 @@ public protocol FilterQueryBuildable {
 }
 
 public indirect enum ConditionalFilter {
-    // basics
-    case withOperator(field: String, op: Operator, value: Any)
+    case withOperator(field: String, operator: Operator, value: Any)
     case like(String, String)
+    case notLike(String, String)
     case `in`(String, Any)
     case notIn(String, Any)
     case between(String, Any, Any)
     case notBetween(String, Any, Any)
     case isNull(String)
     case isNotNull(String)
-    
-    // comparison
-    case andComparison(ConditionalFilter, ConditionalFilter)
-    case orComparison(ConditionalFilter, ConditionalFilter)
-    
-    // raw
     case raw(String, [Any])
+    case and(ConditionalFilter, ConditionalFilter)
+    case or(ConditionalFilter, ConditionalFilter)
 }
 
 extension ConditionalFilter: FilterQueryBuildable {
     public func toBindParams() throws -> [Any] {
         switch self {
-        case .withOperator(_, op: _, let value):
+        case .withOperator(_, operator: _, let value):
             return [pack(value: value)]
             
         case .like(_, let value):
+            return [pack(value: value)]
+            
+        case .notLike(_, let value):
             return [pack(value: value)]
             
         case .in(_, let value):
@@ -88,14 +87,14 @@ extension ConditionalFilter: FilterQueryBuildable {
         case .isNotNull(_):
             return []
             
-        case .andComparison(let aFilter, let bFilter):
-            return try aFilter.toBindParams() + bFilter.toBindParams()
-            
-        case .orComparison(let aFilter, let bFilter):
-            return try aFilter.toBindParams() + bFilter.toBindParams()
-            
         case .raw(_, let params):
             return params
+            
+        case .and(let a, let b):
+            return try a.toBindParams() + b.toBindParams()
+            
+        case .or(let a, let b):
+            return try a.toBindParams() + b.toBindParams()
         }
         throw ConditionalFilterError.unrecognizedFilter
     }
@@ -113,6 +112,12 @@ extension ConditionalFilter: FilterQueryBuildable {
                 return "\(pack(key: field)) LIKE \(value)"
             }
             return "\(pack(key: field)) LIKE ?"
+            
+        case .notLike(let field, let value):
+            if !secure {
+                return "\(pack(key: field)) NOT LIKE \(value)"
+            }
+            return "\(pack(key: field)) NOT LIKE ?"
             
         case .in(let field, let value):
             switch value {
@@ -168,14 +173,14 @@ extension ConditionalFilter: FilterQueryBuildable {
         case .isNotNull(let field):
             return "\(pack(key: field)) IS NOT NULL"
             
-        case .andComparison(let aFilter, let bFilter):
-            return try "(\(aFilter.toQuery()) AND \(bFilter.toQuery()))"
-            
-        case .orComparison(let aFilter, let bFilter):
-            return try "(\(aFilter.toQuery()) OR \(bFilter.toQuery()))"
-            
         case .raw(let query, _):
             return query
+
+        case .and(let a, let b):
+            return try "(\(a.toQuery()) AND \(b.toQuery()))"
+            
+        case .or(let a, let b):
+            return try "(\(a.toQuery()) OR \(b.toQuery()))"
         }
         throw ConditionalFilterError.unrecognizedFilter
     }
@@ -235,38 +240,38 @@ func pack(value: Any) -> Any {
 }
 
 public func || (lhs: ConditionalFilter, rhs: ConditionalFilter) -> ConditionalFilter {
-    return .orComparison(lhs, rhs)
+    return .or(lhs, rhs)
 }
 
 public func && (lhs: ConditionalFilter, rhs: ConditionalFilter) -> ConditionalFilter {
-    return .andComparison(lhs, rhs)
+    return .and(lhs, rhs)
 }
 
 public func >(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .greaterThan, value: pred)
+    return .withOperator(field: key, operator: .greaterThan, value: pred)
 }
 
 public func >=(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .greaterThanEqual, value: pred)
+    return .withOperator(field: key, operator: .greaterThanEqual, value: pred)
 }
 
 public func <(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .smallerThan, value: pred)
+    return .withOperator(field: key, operator: .smallerThan, value: pred)
 }
 
 public func <=(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .smallerThanEqual, value: pred)
+    return .withOperator(field: key, operator: .smallerThanEqual, value: pred)
 }
 
 public func ==(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .equal, value: pred)
+    return .withOperator(field: key, operator: .equal, value: pred)
 }
 
 public func !=(key: String, pred: Any) -> ConditionalFilter {
-    return .withOperator(field: key, op: .notEqual, value: pred)
+    return .withOperator(field: key, operator: .notEqual, value: pred)
 }
 
-public enum ConditionConnector {
+enum ConditionConnector {
     case `where`(ConditionalFilter)
     case and(ConditionalFilter)
     case or(ConditionalFilter)
@@ -274,7 +279,7 @@ public enum ConditionConnector {
 
 extension Collection where Self.Iterator.Element == ConditionConnector {
     
-    public func bindParams() throws -> [Any] {
+    func bindParams() throws -> [Any] {
         var params = [Any]()
         
         for c in self {
@@ -293,7 +298,7 @@ extension Collection where Self.Iterator.Element == ConditionConnector {
         return params
     }
     
-    public func build() throws -> String  {
+    func build() throws -> String  {
         let clauses: [String] = try self.map({
             switch $0 {
             case .where(let clause):

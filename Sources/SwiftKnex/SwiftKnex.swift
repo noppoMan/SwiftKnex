@@ -133,3 +133,95 @@ public final class Knex {
         return Knex(config: config, connection: connection)
     }
 }
+
+public func between(_ field: String, _ from: Int, _ to: Int) -> ConditionalFilter {
+    return .between(field, from, to)
+}
+
+public func between(_ field: String, _ from: Float, _ to: Float) -> ConditionalFilter {
+    return .between(field, from, to)
+}
+
+public func between(_ field: String, _ from: Double, _ to: Double) -> ConditionalFilter {
+    return .between(field, from, to)
+}
+
+public func between(_ field: String, _ from: String, _ to: String) -> ConditionalFilter {
+    return .between(field, from, to)
+}
+
+public func notBetween(_ field: String, _ from: Int, _ to: Int) -> ConditionalFilter {
+    return .notBetween(field, from, to)
+}
+
+public func notBetween(_ field: String, _ from: Float, _ to: Float) -> ConditionalFilter {
+    return .notBetween(field, from, to)
+}
+
+public func notBetween(_ field: String, _ from: Double, _ to: Double) -> ConditionalFilter {
+    return .notBetween(field, from, to)
+}
+
+public func notBetween(_ field: String, _ from: String, _ to: String) -> ConditionalFilter {
+    return .notBetween(field, from, to)
+}
+
+public func `in`(_ field: String, _ values: [Int]) -> ConditionalFilter {
+    return .in(field, values)
+}
+
+public func `in`(_ field: String, _ values: [Double]) -> ConditionalFilter {
+    return .in(field, values)
+}
+
+public func `in`(_ field: String, _ values: [Float]) -> ConditionalFilter {
+    return .in(field, values)
+}
+
+public func `in`(_ field: String, _ values: [String]) -> ConditionalFilter {
+    return .in(field, values)
+}
+
+public func `in`(_ field: String, _ queryBuilder: QueryBuilder) -> ConditionalFilter {
+    return .in(field, queryBuilder)
+}
+
+public func notIn(_ field: String, _ values: [Int]) -> ConditionalFilter {
+    return .notIn(field, values)
+}
+
+public func notIn(_ field: String, _ values: [Double]) -> ConditionalFilter {
+    return .notIn(field, values)
+}
+
+public func notIn(_ field: String, _ values: [Float]) -> ConditionalFilter {
+    return .notIn(field, values)
+}
+
+public func notIn(_ field: String, _ values: [String]) -> ConditionalFilter {
+    return .notIn(field, values)
+}
+
+public func notIn(_ field: String, _ queryBuilder: QueryBuilder) -> ConditionalFilter {
+    return .notIn(field, queryBuilder)
+}
+
+public func like(_ field: String, _ value: String) -> ConditionalFilter {
+    return .like(field, value)
+}
+
+public func notlike(_ field: String, _ value: String) -> ConditionalFilter {
+    return .notLike(field, value)
+}
+
+public func isNull(_ field: String) -> ConditionalFilter {
+    return .isNull(field)
+}
+
+public func isNotNull(_ field: String) -> ConditionalFilter {
+    return .isNotNull(field)
+}
+
+public func raw(_ query: String, _ params: [Any] = []) -> ConditionalFilter {
+    return .raw(query, params)
+}

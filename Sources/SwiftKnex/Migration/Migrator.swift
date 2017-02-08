@@ -182,7 +182,7 @@ class MigrateRunner {
             let deleteIDs = peformedAtLastBatches.map({ $0.id })
             _ = try con.knex()
                 .table(con.config.migration.table)
-                .where(.in("id", deleteIDs))
+                .where(SwiftKnex.in("id", deleteIDs))
                 .delete(trx: trx)
             
             print("Rollbacked last batch items: batch no \(lastBatch)")

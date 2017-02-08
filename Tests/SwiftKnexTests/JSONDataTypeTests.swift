@@ -82,7 +82,7 @@ class JSONDataTypeTests: XCTestCase {
         
         rows = try! con.knex()
             .select(raw("JSON_UNQUOTE(JSON_EXTRACT(body, '$.name'))").as("name"))
-            .where(.raw("JSON_UNQUOTE(JSON_EXTRACT(body,'$.job')) = ?", ["Jedai"]))
+            .where(raw("JSON_UNQUOTE(JSON_EXTRACT(body,'$.job')) = ?", ["Jedai"]))
             .table("json_table")
             .fetch()
         
@@ -92,7 +92,7 @@ class JSONDataTypeTests: XCTestCase {
     func testUpdate() {
         let res = try! con.knex()
             .table("json_table")
-            .where(.raw("JSON_UNQUOTE(JSON_EXTRACT(body,'$.name')) = ?", ["Luke"]))
+            .where(raw("JSON_UNQUOTE(JSON_EXTRACT(body,'$.name')) = ?", ["Luke"]))
             .update(query: "body = JSON_REPLACE(body, '$.name', ?)", params: ["Obi Wan"])
         
         XCTAssertEqual(res!.affectedRows, 1)
