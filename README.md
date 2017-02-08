@@ -49,11 +49,6 @@ let knex = con.knex()
 ```swift
 let results = try knex.table("users").where("id" == 1).fetch()
 print(results)
-
-// or
-
-let results = try knex.table("users").where(.withOperator("id", .equal, 1)).fetch()
-print(results)
 ```
 
 ### where between and limit and offset
@@ -63,7 +58,7 @@ You can chain the conditional clauses like SQL and it's amazing expressive.
 ```swift
 let results = try knex
                   .table("users")
-                  .where(.between("id", 1, 1000))
+                  .where(between("id", 1, 1000))
                   .limit(10)
                   .offset(10)
                   .fetch()
@@ -126,7 +121,7 @@ print(results)
 ```swift
 let results = try knex
                     .table("users")
-                    .where(.in("id",
+                    .where(SwiftKnex.in("id",
                         QueryBuilder()
                           .select(col("id"))
                           .table("t1")
@@ -185,16 +180,23 @@ print(result?.insertId)
 Note. Recently not supported entire clauses in Mysql.
 
 * `where(_ filter: ConditionFilter)`
-  - `withOperator(field: String, op: Operator, value: Any)`
-  - `like(field: String, value: String)`
-  - `in(field: String, value: Any)`
-  - `notIn(field: String, value: Any)`
-  - `between(field: String, from: Any, to: Any)`
-  - `notBetween(field: String, from: Any, to: Any)`
-  - `isNull(field: String)`
-  - `isNotNull(field: String)`
-  - `raw(String)`
+  - `like`
+  - `in`
+  - `notIn`
+  - `between`
+  - `notBetween`
+  - `isNull`
+  - `isNotNull`
+  - `raw`
 * `or(_ clause: ConditionFilter)`
+  - `like`
+  - `in`
+  - `notIn`
+  - `between`
+  - `notBetween`
+  - `isNull`
+  - `isNotNull`
+  - `raw`
 * `join(_ table: String)`
 * `leftJoin(_ table: String)`
 * `rightJoin(_ table: String)`

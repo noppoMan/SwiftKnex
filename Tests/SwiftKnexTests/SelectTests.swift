@@ -67,25 +67,25 @@ class SelectTests: XCTestCase {
         rows = try! con.knex().table("test_users").where("age" != 23).fetch()
         XCTAssert(rows!.count == 6)
         
-        rows = try! con.knex().table("test_users").where(.like("email", "jac%")).fetch()
+        rows = try! con.knex().table("test_users").where(like("email", "jac%")).fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table("test_users").where(.in("name", ["Tonny", "Ray", "Julia"])).fetch()
+        rows = try! con.knex().table("test_users").where(SwiftKnex.in("name", ["Tonny", "Ray", "Julia"])).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table("test_users").where(.notIn("name", ["Tonny", "Ray", "Julia"])).fetch()
+        rows = try! con.knex().table("test_users").where(notIn("name", ["Tonny", "Ray", "Julia"])).fetch()
         XCTAssert(rows!.count == 4)
         
-        rows = try! con.knex().table("test_users").where(.between("age", 10, 30)).fetch()
+        rows = try! con.knex().table("test_users").where(between("age", 10, 30)).fetch()
         XCTAssert(rows!.count == 4)
         
-        rows = try! con.knex().table("test_users").where(.notBetween("age", 10, 30)).fetch()
+        rows = try! con.knex().table("test_users").where(notBetween("age", 10, 30)).fetch()
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table("test_users").where(.isNull("country")).fetch()
+        rows = try! con.knex().table("test_users").where(isNull("country")).fetch()
         XCTAssert(rows!.count == 2)
         
-        rows = try! con.knex().table("test_users").where(.isNotNull("country")).fetch()
+        rows = try! con.knex().table("test_users").where(isNotNull("country")).fetch()
         XCTAssert(rows!.count == 5)
         
         rows = try! con.knex().table("test_users").where("name" == "Jack").where("country" == "USA").fetch()
@@ -103,11 +103,11 @@ class SelectTests: XCTestCase {
         
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table("test_users").where(.in("id", QueryBuilder().select(col("id")).table("test_users").where("country" == "USA"))).fetch()
+        rows = try! con.knex().table("test_users").where(SwiftKnex.in("id", QueryBuilder().select(col("id")).table("test_users").where("country" == "USA"))).fetch()
         
         XCTAssert(rows!.count == 3)
         
-        rows = try! con.knex().table("test_users").where(.notIn("id", QueryBuilder().select(col("id")).table("test_users").where("country" == "USA"))).fetch()
+        rows = try! con.knex().table("test_users").where(notIn("id", QueryBuilder().select(col("id")).table("test_users").where("country" == "USA"))).fetch()
         
         XCTAssert(rows!.count == 4)
     }
