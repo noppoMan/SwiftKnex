@@ -13,23 +13,20 @@ struct UpdateQueryBuilder: QueryBuildable {
         case dictionary([String: Any])
     }
     
-    let table: Table
-    
-    let condistions: [ConditionConnector]
-    
-    let limit: Limit?
-    
-    let orders: [OrderBy]
-    
-    let group: GroupBy?
-    
-    let having: Having?
-    
-    let joins: [Join]
+    let builder: QueryBuilder
     
     let setValue: SetValue
     
+    init(builder: QueryBuilder, setValue: SetValue){
+        self.builder = builder
+        self.setValue = setValue
+    }
+    
     func build() throws -> (String, [Any]) {
+        guard let table = self.builder.table else {
+            throw QueryBuilderError.tableIsNotSet
+        }
+        
         let setQuery: String
         var bindParams: [Any]
         switch setValue {
@@ -42,30 +39,28 @@ struct UpdateQueryBuilder: QueryBuildable {
             bindParams = params
         }
         
-        let condistionQuery = try condistions.build()
-        try bindParams.append(contentsOf: condistions.bindParams())
+        let condistionQuery = try builder.condistions.build()
+        try bindParams.append(contentsOf: builder.condistions.bindParams())
     
-        let groupQuery = try group != nil ? group!.build() : ""
+        let groupQuery = try builder.group != nil ? builder.group!.build() : ""
         var havingQuery = ""
-        if let having = self.having {
+        if let having = self.builder.having {
             havingQuery = try having.build()
             try bindParams.append(contentsOf:  having.condition.toBindParams())
         }
         
-        let limitQuery = try limit != nil ? limit!.build() : ""
+        let limitQuery = try builder.limit != nil ? builder.limit!.build() : ""
         
         var sql = ""
         sql += "UPDATE"
         sql += try insertSpace(table.build().0)
-        try sql += insertSpace(joins.build())
+        try sql += insertSpace(builder.joins.build())
         sql += " SET \(setQuery)"
         sql += insertSpace(condistionQuery)
         sql += insertSpace(groupQuery)
         sql += insertSpace(havingQuery)
-        sql += insertSpace(orders.build())
+        sql += insertSpace(builder.orders.build())
         sql += insertSpace(limitQuery)
-        
-        print(bindParams)
         
         return (sql, bindParams)
     }
