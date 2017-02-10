@@ -15,44 +15,39 @@ struct BasicQueryBuilder: QueryBuildable {
     
     let type: QueryType
     
-    let table: Table
+    let builder: QueryBuilder
     
-    let condistions: [ConditionConnector]
-    
-    let limit: Limit?
-    
-    let orders: [OrderBy]
-    
-    let group: GroupBy?
-    
-    let having: Having?
-    
-    let joins: [Join]
-    
-    let selectFields: [Field]
+    init(type: QueryType, builder: QueryBuilder) {
+        self.type = type
+        self.builder = builder
+    }
     
     func build() throws -> (String, [Any]) {
+        guard let _table = self.builder.table else {
+            throw QueryBuilderError.tableIsNotSet
+        }
+        
         var bindParams = [Any]()
-        let (table, params) = try self.table.build()
+        let (table, params) = try _table.build()
         bindParams.append(contentsOf: params)
         
-        let condistionQuery = try condistions.build()
-        try bindParams.append(contentsOf: condistions.bindParams())
+        let condistionQuery = try builder.condistions.build()
+        try bindParams.append(contentsOf: builder.condistions.bindParams())
         
-        let groupQuery = try group != nil ? group!.build() : ""
+        let groupQuery = try builder.group != nil ? builder.group!.build() : ""
         var havingQuery = ""
-        if let having = self.having {
+        if let having = self.builder.having {
             havingQuery = try having.build()
             try bindParams.append(contentsOf:  having.condition.toBindParams())
         
         }
-        let limitQuery = try limit != nil ? limit!.build() : ""
+        let limitQuery = try builder.limit != nil ? builder.limit!.build() : ""
         
         var sql = ""
         
         switch type {
         case .select:
-            let fieldsQuery = selectFields.count > 0 ? selectFields.map({ "\($0)"}).joined(separator: ", ") : "*"
+            let fieldsQuery = builder.selectFields.count > 0 ? builder.selectFields.map({ "\($0)"}).joined(separator: ", ") : "*"
             sql += "SELECT"
             sql += insertSpace(fieldsQuery)
         case .delete:
@@ -61,11 +56,11 @@ struct BasicQueryBuilder: QueryBuildable {
         
         sql += " FROM"
         sql += insertSpace(table)
-        sql += try insertSpace(joins.build())
+        sql += try insertSpace(builder.joins.build())
         sql += insertSpace(condistionQuery)
         sql += insertSpace(groupQuery)
         sql += insertSpace(havingQuery)
-        sql += insertSpace(orders.build())
+        sql += insertSpace(builder.orders.build())
         sql += insertSpace(limitQuery)
         
         return (sql, bindParams)

@@ -167,66 +167,30 @@ public final class QueryBuilder {
     }
     
     public func build(_ type: QueryType) throws -> QueryBuildable {
-        guard let table = self.table else {
-            throw QueryBuilderError.tableIsNotSet
-        }
-        
         switch type {
         case .select:
-            return BasicQueryBuilder(
-                type: .select,
-                table: table,
-                condistions: condistions,
-                limit: limit,
-                orders: orders,
-                group: group,
-                having: having,
-                joins: joins,
-                selectFields: selectFields
-            )
+            return BasicQueryBuilder(type: .select, builder: self)
             
         case .delete:
-            return BasicQueryBuilder(
-                type: .delete,
-                table: table,
-                condistions: condistions,
-                limit: limit,
-                orders: orders,
-                group: group,
-                having: having,
-                joins: joins,
-                selectFields: selectFields
-            )
+            return BasicQueryBuilder(type: .delete, builder: self)
             
         case .insert(let values):
+            guard let table = self.table else {
+                throw QueryBuilderError.tableIsNotSet
+            }
             return InsertQueryBuilder(into: table, values: values)
         
         case .batchInsert(let collection):
+            guard let table = self.table else {
+                throw QueryBuilderError.tableIsNotSet
+            }
             return BatchInsertQueryBuilder(into: table, collection: collection)
             
         case .update(let sets):
-            return UpdateQueryBuilder(
-                table: table,
-                condistions: condistions,
-                limit: limit,
-                orders: orders,
-                group: group,
-                having: having,
-                joins: joins,
-                setValue: .dictionary(sets)
-            )
+            return UpdateQueryBuilder(builder: self, setValue: .dictionary(sets))
             
         case .updateRaw(query: let query, params: let params):
-            return UpdateQueryBuilder(
-                table: table,
-                condistions: condistions,
-                limit: limit,
-                orders: orders,
-                group: group,
-                having: having,
-                joins: joins,
-                setValue: .raw(query: query, params: params)
-            )
+            return UpdateQueryBuilder(builder: self, setValue: .raw(query: query, params: params))
         
         default:
             throw QueryBuilderError.unimplementedStatement(type)
