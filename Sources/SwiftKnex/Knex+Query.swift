@@ -8,6 +8,13 @@
 
 extension Knex {
     
+    public func fetch<T: CollectionType>(trx: Connection? = nil) throws -> T? {
+        guard let rows = try execute(.select, trx).asResultSet() else {
+            return nil
+        }
+        return try T(rows: rows)
+    }
+    
     public func fetch<T: Entity>(trx: Connection? = nil) throws -> [T] {
         let rows = try execute(.select, trx).asResultSet()
         return try rows?.map { try T(row: $0) } ?? []
