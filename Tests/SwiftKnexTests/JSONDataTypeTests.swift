@@ -95,6 +95,6 @@ class JSONDataTypeTests: XCTestCase {
             .where(raw("JSON_UNQUOTE(JSON_EXTRACT(body,'$.name')) = ?", ["Luke"]))
             .update(query: "body = JSON_REPLACE(body, '$.name', ?)", params: ["Obi Wan"])
         
-        XCTAssertEqual(res!.affectedRows, 1)
+        XCTAssertEqual(res.affectedRows, 1)
     }
 }

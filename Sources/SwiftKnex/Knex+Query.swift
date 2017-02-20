@@ -17,38 +17,38 @@ extension Knex {
         return try execute(.select, trx).asResultSet()
     }
     
-    public func insert(into table: String, collection: [Serializable], trx: Connection? = nil) throws -> QueryStatus? {
+    public func insert(into table: String, collection: [Serializable], trx: Connection? = nil) throws -> QueryStatus {
         queryBuilder.table(table)
         
-        return try execute(.batchInsert(collection.map({ try $0.serialize() })), trx).asQueryStatus()
+        return try execute(.batchInsert(collection.map({ try $0.serialize() })), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func insert(into table: String, collection: [[String: Any]], trx: Connection? = nil) throws -> QueryStatus? {
+    public func insert(into table: String, collection: [[String: Any]], trx: Connection? = nil) throws -> QueryStatus {
         queryBuilder.table(table)
         
-        return try execute(.batchInsert(collection), trx).asQueryStatus()
+        return try execute(.batchInsert(collection), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func insert(into table: String, values: Serializable, trx: Connection? = nil) throws -> QueryStatus? {
+    public func insert(into table: String, values: Serializable, trx: Connection? = nil) throws -> QueryStatus {
         queryBuilder.table(table)
-        return try execute(.insert(values.serialize()), trx).asQueryStatus()
+        return try execute(.insert(values.serialize()), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func insert(into table: String, values: [String: Any], trx: Connection? = nil) throws -> QueryStatus? {
+    public func insert(into table: String, values: [String: Any], trx: Connection? = nil) throws -> QueryStatus {
         queryBuilder.table(table)
-        return try execute(.insert(values), trx).asQueryStatus()
+        return try execute(.insert(values), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func update(sets: [String: Any], trx: Connection? = nil) throws -> QueryStatus? {
-        return try execute(.update(sets), trx).asQueryStatus()
+    public func update(sets: [String: Any], trx: Connection? = nil) throws -> QueryStatus {
+        return try execute(.update(sets), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func update(query: String, params: [Any] = [], trx: Connection? = nil) throws -> QueryStatus? {
-        return try execute(.updateRaw(query: query, params: params), trx).asQueryStatus()
+    public func update(query: String, params: [Any] = [], trx: Connection? = nil) throws -> QueryStatus {
+        return try execute(.updateRaw(query: query, params: params), trx).asQueryStatus() ?? QueryStatus()
     }
     
-    public func delete(trx: Connection? = nil) throws -> QueryStatus? {
-        return try execute(.delete, trx).asQueryStatus()
+    public func delete(trx: Connection? = nil) throws -> QueryStatus {
+        return try execute(.delete, trx).asQueryStatus() ?? QueryStatus()
     }
     
     private func execute(_ type: QueryType, _ trx: Connection?) throws -> QueryResult {
