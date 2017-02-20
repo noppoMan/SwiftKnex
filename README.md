@@ -131,7 +131,56 @@ let results = try knex
 print(results)
 ```
 
-### TypeSafe Querying with Entity protocol
+## Operators, Conditions and Clauses
+
+### Operators
+
+SwiftKnex can evaluate comparison formula as function.
+If you input `"id" == 1` in `where` clause, it is evaluated as `function`(Not BOOL) and tnrasform to SQL Comparison Literal.
+
+| SwiftKnex           |  Mysql             |
+| ------------------- |:------------------:|
+| where("id" == 1)    | where `id` = 1     |
+| where("id" > 1)     | where `id` > 1     |
+| where("id" >= 1)    | where `id` >= 1    |
+| where("id" < 1)     | where `id` < 1     |
+| where("id" <= 1)    | where `id` <= 1    |
+| where("id" != 1)    | where `id` != 1    |
+
+### Conditions
+
+SwiftKnex provides conditions as function. Here are list of conditions available now.
+
+* `where(_ filter: ConditionFilter)`
+  - like: `knex().where(like("name", "%a%"))`
+  - in: `knex().where(in("id", [1, 2, 3]))`
+  - notIn: `knex().where(notIn("id", [1, 2, 3]))`
+  - between: `knex().where(between("date", "2017-01-01", "2017-01-31"))`
+  - notBetween: `knex().where(notBetween("date", "2017-01-01", "2017-01-31"))`
+  - isNull: `knex().where(isNull("deleted_at"))`
+  - isNotNull: `knex().where(isNotNull("deleted_at"))`
+  - raw: `knex().where(raw("id = ?", [1]))`
+* `or(_ filter: ConditionFilter)`
+  - `knex().where(in("id", [1, 2, 3])).or(in("id", [4, 5, 6]))`
+ 
+ 
+### Clauses
+
+Of cource it supports other clauses. You can use them with `knex()`'s method chain.
+  
+* join(_ table: String): `knex().table("a").join("b")`
+* leftJoin(_ table: String): `knex().table("a").leftJoin("b")`
+* rightJoin(_ table: String): `knex().table("a").rightJoin("b")`
+* innerJoin(_ with table: String): `knex().table("a").innerJoin("b")`
+* on(_ filter: ConditionFilter): `knex().table("a").join("b").on("a.id" == "b.a_id")`
+* limit(_ limit: Int): `knex().limit(10)`
+* offset(_ offset: Int): `knex().limit(10).offset(100)`
+* order(by: String, sort: OrderSort = .asc): `knex().order(by: "created_at", .desc)`
+* group(by name: String): `knex().group(by: "company")`
+* having(_ cond: ConditionFilter): `knex().group(by: "company").having(in("name", ["Google", "Apple"]))`
+
+
+## TypeSafe Querying with Entity protocol
 
 Define Your Entity with confirming `Entity` protocol and fetch rows as your specified type.
 
@@ -174,39 +223,6 @@ let result = try! con.knex().insert(into: "users", values: user)
 
 print(result?.insertId)
 ```
-
-### Available clauses
-
-Note. Recently not supported entire clauses in Mysql.
-
-* `where(_ filter: ConditionFilter)`
-  - `like`
-  - `in`
-  - `notIn`
-  - `between`
-  - `notBetween`
-  - `isNull`
-  - `isNotNull`
-  - `raw`
-* `or(_ clause: ConditionFilter)`
-  - `like`
-  - `in`
-  - `notIn`
-  - `between`
-  - `notBetween`
-  - `isNull`
-  - `isNotNull`
-  - `raw`
-* `join(_ table: String)`
-* `leftJoin(_ table: String)`
-* `rightJoin(_ table: String)`
-* `innerJoin(_ with table: String)`
-* `on(_ filter: ConditionFilter)`
-* `limit(_ limit: Int)`
-* `offset(_ offset: Int)`
-* `order(by: String, sort: OrderSort = .asc)`
-* `group(by name: String)`
-* `having(_ cond: ConditionFilter)`
 
 ## Insert
 ```swift
