@@ -60,11 +60,11 @@ func validateMigration(name: String) throws -> String {
     }
     
     let ts = segments[1]
-    if ts.characters.count != 14 {
+    if ts.count != 14 {
         throw MigrationError.timestampFormatShouldBe("yyyyMMddHHmmss")
     }
     
-    let year = ts.substring(to: ts.index(ts.startIndex, offsetBy: 4))
+    let year = ts[ts.startIndex...ts.index(ts.startIndex, offsetBy: 4)]
     let month = ts[ts.index(ts.startIndex, offsetBy: 4)..<ts.index(ts.startIndex, offsetBy: 6)]
     let day = ts[ts.index(ts.startIndex, offsetBy: 6)..<ts.index(ts.startIndex, offsetBy: 8)]
     let hour = ts[ts.index(ts.startIndex, offsetBy: 8)..<ts.index(ts.startIndex, offsetBy:10)]

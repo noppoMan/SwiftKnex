@@ -73,7 +73,7 @@ case "create":
     let now = Date().toMigrationFileDateTimeString()
     let fileName = "\(now)_\(CommandLine.arguments[2])"
     
-    let root = #file.characters
+    let root = #file
         .split(separator: "/", omittingEmptySubsequences: false)
         .dropLast(3)
         .map { String($0) }
