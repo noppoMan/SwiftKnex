@@ -249,9 +249,15 @@ func lenEncInt(_ b: [UInt8]) -> (UInt64?, Int) {
         
     // 254: value of following 8
     case 0xfe:
-        return (UInt64(b[1]) | UInt64(b[2])<<8 | UInt64(b[3])<<16 |
-            UInt64(b[4])<<24 | UInt64(b[5])<<32 | UInt64(b[6])<<40 |
-            UInt64(b[7])<<48 | UInt64(b[8])<<56, 9)
+        let u1 = UInt64(b[1])
+        let u2 = UInt64(b[2])<<8
+        let u3 = UInt64(b[3])<<16
+        let u4 = UInt64(b[4])<<24
+        let u5 = UInt64(b[5])<<32
+        let u6 = UInt64(b[6])<<40
+        let u7 = UInt64(b[7])<<48
+        let u8 = UInt64(b[8])<<56
+        return (u1 | u2 | u3 | u4 | u5 | u6 | u7 | u8, 9)
     default:
         break
     }

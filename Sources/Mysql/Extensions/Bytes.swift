@@ -42,7 +42,7 @@
 
 import Foundation
 
-func arrayOfBytes<T: Integer>(_ value: T, length totalBytes: Int = MemoryLayout<T>.size) -> Array<UInt8> {
+func arrayOfBytes<T: BinaryInteger>(_ value: T, length totalBytes: Int = MemoryLayout<T>.size) -> Array<UInt8> {
     let valuePointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
     valuePointer.pointee = value
     
@@ -137,7 +137,11 @@ extension Int {
             res |= Int(arr[arr.startIndex + i]) << Int(i*8)
         }
         //self = res
-        self = Int(arr[arr.startIndex + 3])<<24 | Int(arr[arr.startIndex + 2])<<16 | Int(arr[arr.startIndex + 1])<<8 | Int(arr[arr.startIndex])
+        let i4 = Int(arr[arr.startIndex + 3])<<24
+        let i3 = Int(arr[arr.startIndex + 2])<<16
+        let i2 = Int(arr[arr.startIndex + 1])<<8
+        let i1 = Int(arr[arr.startIndex])
+        self = i4 | i3 | i2 | i1
     }
     
     func array() ->[UInt8] {
@@ -216,7 +220,11 @@ extension Sequence where Iterator.Element == UInt8 {
             return elem
         }
         
-        return Int32(arr[3])<<24 | Int32(arr[2])<<16 | Int32(arr[1])<<8 | Int32(arr[0])
+        let i4 = Int32(arr[3])<<24
+        let i3 = Int32(arr[2])<<16
+        let i2 = Int32(arr[1])<<8
+        let i1 = Int32(arr[0])
+        return i4 | i3 | i2 | i1
     }
     
     func uInt32() -> UInt32 {
@@ -224,7 +232,11 @@ extension Sequence where Iterator.Element == UInt8 {
             return elem
         }
         
-        return UInt32(arr[3])<<24 | UInt32(arr[2])<<16 | UInt32(arr[1])<<8 | UInt32(arr[0])
+        let u4 = UInt32(arr[3])<<24
+        let u3 = UInt32(arr[2])<<16
+        let u2 = UInt32(arr[1])<<8
+        let u1 = UInt32(arr[0])
+        return u4 | u3 | u2 | u1
     }
     
     func uInt64() -> UInt64 {

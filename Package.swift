@@ -1,13 +1,16 @@
+// swift-tools-version:4.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
 let package = Package(
     name: "SwiftKnex",
-    targets: [
-        Target(name: "Mysql"),
-        Target(name: "SwiftKnex", dependencies: ["Mysql"]),
-        Target(name: "SwiftKnexMigration", dependencies: ["SwiftKnex", "Mysql"])
-    ],
     dependencies: [
-        .Package(url: "https://github.com/noppoMan/Prorsum.git", majorVersion: 0, minor: 1)
+        .package(url: "https://github.com/noppoMan/Prorsum.git", .exact("0.1.16"))
+    ],
+    targets: [
+        .target(name: "Mysql", dependencies: ["Prorsum"]),
+        .target(name: "SwiftKnex", dependencies: ["Mysql"]),
+        .target(name: "SwiftKnexMigration", dependencies: ["SwiftKnex", "Mysql"])
     ]
 )
