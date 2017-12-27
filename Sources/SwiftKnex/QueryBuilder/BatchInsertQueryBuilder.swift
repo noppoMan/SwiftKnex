@@ -21,7 +21,7 @@ struct BatchInsertQueryBuilder: QueryBuildable {
     
     func build() throws -> (String, [Any]) {
         // TODO should throws Error
-        guard let fields = collection.max(by: { $0.0.count < $0.1.count }) else {
+        guard let fields = collection.max(by: { $0.count < $1.count }) else {
             throw QueryBuilderError.emptyValues
         }
         
