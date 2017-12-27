@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "SwiftKnex",
     dependencies: [
-        .package(url: "https://github.com/noppoMan/Prorsum.git", .exact("0.1.16"))
+        .package(url: "https://github.com/noppoMan/Prorsum.git", from: "0.3.0")
     ],
     targets: [
         .target(name: "Mysql", dependencies: ["Prorsum"]),
