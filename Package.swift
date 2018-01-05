@@ -16,6 +16,6 @@ let package = Package(
         .target(name: "Mysql", dependencies: ["Prorsum"]),
         .target(name: "SwiftKnex", dependencies: ["Mysql"]),
         .target(name: "SwiftKnexMigration", dependencies: ["SwiftKnex", "Mysql"]),
-        .testTarget(name: "SwiftKnexTests", dependencies: ["SwiftKnex", "Mysql"], path: "Tests"),
+        .testTarget(name: "SwiftKnexTests", dependencies: ["SwiftKnex", "Mysql"]),
     ]
 )
