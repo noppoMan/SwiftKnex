@@ -31,7 +31,7 @@ then
 
     if [[ $OS == "ubuntu1610" ]];
     then
-        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu15.10";
+        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu16.10";
     else
         if [[ $OS == "ubuntu1604" ]];
         then
